@@ -3,7 +3,7 @@
   "title": "Touchpad Scroll",
   "description": "Changes zoom and pan behavior to support touchpads",
   "author": "shem",
-  "version": "1.0.0-compatible-with-0.6.5",
+  "version": "0.0.1",
   "minimumCoreVersion": "0.6.0",
   "compatibleCoreVersion": "0.6.5",
   "scripts": [
