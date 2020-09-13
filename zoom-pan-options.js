@@ -95,7 +95,7 @@ function zoom(event) {
 }
 
 function panWithTouchpad(event) {
-  const multiplier = 0.8
+  const multiplier = 1 / canvas.stage.scale.x * getSetting('pan-speed-multiplier')
   const x = canvas.stage.pivot.x + event.deltaX * multiplier
   const y = canvas.stage.pivot.y + event.deltaY * multiplier
   canvas.pan({x, y})
@@ -131,6 +131,14 @@ Hooks.on("init", function () {
   game.settings.register("zoom-pan-options", "zoom-speed-multiplier", {
     name: "Zoom speed multiplier",
     hint: "Multiplies zoom speed, affecting scaling speed. Defaults to 1 (5% zoom per mouse tick). A value of 0.2 might be better for touchpads.",
+    scope: "client",
+    config: true,
+    default: 1,
+    type: Number
+  })
+  game.settings.register("zoom-pan-options", "pan-speed-multiplier", {
+    name: "Pan speed multiplier",
+    hint: "Multiplies pan speed, for touchpads. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.",
     scope: "client",
     config: true,
     default: 1,
