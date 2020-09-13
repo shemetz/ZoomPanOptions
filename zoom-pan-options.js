@@ -114,7 +114,7 @@ Hooks.on("init", function () {
     scope: "client",
     config: true,
     default: 1,
-    type: number
+    type: Number
   })
   game.settings.register("zoom-pan-options", "precise-rotation-multiplier", {
     name: "Precise rotation multiplier",
@@ -122,7 +122,7 @@ Hooks.on("init", function () {
     scope: "client",
     config: true,
     default: 1,
-    type: number
+    type: Number
   })
   _onWheel_Original = KeyboardManager.prototype._onWheel
   KeyboardManager.prototype._onWheel = _onWheel_Override;
