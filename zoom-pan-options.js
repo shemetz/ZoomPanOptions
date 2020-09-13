@@ -118,7 +118,6 @@ Hooks.on("init", function () {
     default: 1,
     type: Number
   })
-  _onWheel_Original = KeyboardManager.prototype._onWheel
   KeyboardManager.prototype._onWheel = _onWheel_Override;
   console.log("Zoom/Pan Options is done setting up!");
 });
