@@ -42,7 +42,7 @@ function _onWheel_Override(event) {
  */
 function zoom(event) {
   const multiplier = getSetting("zoom-speed-multiplier")
-  let dz = (-event.deltaY) * 0.05 * multiplier + 1
+  let dz = (-event.deltaY) * 0.0005 * multiplier + 1
   if (!getSetting("zoom-around-cursor")) {
     canvas.pan({scale: dz * canvas.stage.scale.x});
     return;
