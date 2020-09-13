@@ -90,14 +90,14 @@ function pan(event) {
 }
 
 Hooks.on("init", function () {
-  game.settings.register("zoom-pan-options", "zoom-around-cursor", {
-    name: "Zoom by pinching, pan by dragging",
-    hint: "Pan with two-finger drag on laptop touchpads (or vertical/horizontal scroll)." +
-      " Zoom with two-finger pinch (or Ctrl+scroll)" +
-      " Precisely rotate a token with Ctrl+Shift+scroll",
+  game.settings.register("zoom-pan-options", "touchpad-scroll", {
+    name: "Zoom by pinching, pan by dragging (Touchpad mode)",
+    hint: "Pan with two-finger drag (or vertical/horizontal scroll)." +
+      " Zoom with two-finger pinch (or Ctrl+scroll)." +
+      " Precisely rotate a token with Ctrl+Shift+scroll.",
     scope: "client",
     config: true,
-    default: true,
+    default: false,
     type: Boolean
   })
   game.settings.register("zoom-pan-options", "zoom-around-cursor", {
