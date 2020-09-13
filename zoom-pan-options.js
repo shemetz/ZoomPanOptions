@@ -129,7 +129,7 @@ Hooks.on("init", function () {
     type: Boolean
   })
   game.settings.register("zoom-pan-options", "zoom-speed-multiplier", {
-    name: "Zoom speed multiplier",
+    name: "Zoom speed",
     hint: "Multiplies zoom speed, affecting scaling speed. Defaults to 1 (5% zoom per mouse tick). A value of 0.2 might be better for touchpads.",
     scope: "client",
     config: true,
@@ -137,7 +137,7 @@ Hooks.on("init", function () {
     type: Number
   })
   game.settings.register("zoom-pan-options", "pan-speed-multiplier", {
-    name: "Pan speed multiplier",
+    name: "Pan speed",
     hint: "Multiplies pan speed, for touchpads. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.",
     scope: "client",
     config: true,
@@ -145,7 +145,7 @@ Hooks.on("init", function () {
     type: Number
   })
   game.settings.register("zoom-pan-options", "precise-rotation-multiplier", {
-    name: "Precise rotation multiplier",
+    name: "Precise rotation speed",
     hint: "Multiplies precise rotation. Defaults to 1. Applies to ctrl+scrolling (mouse) or shift+panning (touchpad).",
     scope: "client",
     config: true,

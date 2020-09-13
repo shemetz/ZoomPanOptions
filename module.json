@@ -3,7 +3,7 @@
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad zoom/pan support, and other options.",
   "author": "shem",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "minimumCoreVersion": "0.6.0",
   "compatibleCoreVersion": "0.6.6",
   "scripts": [
