@@ -33,8 +33,37 @@ function _onWheel_Override(event) {
     // Case 2 - zoom the canvas (touchpad pinch, or normal scroll)
     else if (isCtrl || !touchpad) zoom(event)
     // Case 3 - pan the canvas (touchpad scroll)
-    else pan(event);
+    else panWithTouchpad(event);
   }
+}
+
+function _constrainView_Override({x, y, scale}) {
+  const d = canvas.dimensions;
+
+  // Constrain the maximum zoom level
+  if (Number.isNumeric(scale) && (scale !== this.stage.scale.x)) {
+    const max = CONFIG.Canvas.maxZoom;
+    const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
+    if (getSetting("disable-zoom-rounding"))
+      scale = Math.round(Math.clamped(scale, 1 / ratio, max) * 100) / 100;
+    else
+      scale = Math.round(Math.clamped(scale, 1 / ratio, max) * 100) / 100;
+  } else {
+    scale = this.stage.scale.x;
+  }
+
+  // Constrain the pivot point using the new scale
+  if (Number.isNumeric(x) && x !== this.stage.pivot.x) {
+    const padw = 0.4 * (window.innerWidth / scale);
+    x = Math.clamped(x, -padw, d.width + padw);
+  } else x = this.stage.pivot.x;
+  if (Number.isNumeric(y) && x !== this.stage.pivot.y) {
+    const padh = 0.4 * (window.innerHeight / scale);
+    y = Math.clamped(y, -padh, d.height + padh);
+  } else y = this.stage.pivot.y;
+
+  // Return the constrained view dimensions
+  return {x, y, scale};
 }
 
 /**
@@ -65,25 +94,22 @@ function zoom(event) {
   canvas.pan({x, y, scale});
 }
 
-function pan(event) {
-  if (event.deltaY !== 0) {
-    let dy = event.deltaY * 3;
-    const x = null;
-    const y = canvas.stage.pivot.y + dy;
-    const scale = null;
-    canvas.pan({x, y, scale});
-  }
-
-  if (event.deltaX !== 0) {
-    let dx = event.deltaX * 3;
-    const x = canvas.stage.pivot.x + dx;
-    const y = null;
-    const scale = null;
-    canvas.pan({x, y, scale});
-  }
+function panWithTouchpad(event) {
+  const multiplier = 0.8
+  const x = canvas.stage.pivot.x + event.deltaX * multiplier
+  const y = canvas.stage.pivot.y + event.deltaY * multiplier
+  canvas.pan({x, y})
 }
 
 Hooks.on("init", function () {
+  game.settings.register("zoom-pan-options", "zoom-around-cursor", {
+    name: "Zoom around cursor",
+    hint: "Center zooming around cursor. Does not apply to zooming with pageup or pagedown.",
+    scope: "client",
+    config: true,
+    default: true,
+    type: Boolean
+  })
   game.settings.register("zoom-pan-options", "touchpad-scroll", {
     name: "Zoom by pinching, pan by dragging (Touchpad mode)",
     hint: "Pan with two-finger drag (or vertical/horizontal scroll)." +
@@ -94,12 +120,12 @@ Hooks.on("init", function () {
     default: false,
     type: Boolean
   })
-  game.settings.register("zoom-pan-options", "zoom-around-cursor", {
-    name: "Zoom around cursor",
-    hint: "Center zooming around cursor. Does not apply to zooming with pageup or pagedown.",
+  game.settings.register("zoom-pan-options", "disable-zoom-rounding", {
+    name: "Disable zoom rounding",
+    hint: "Disables default Foundry behavior, which rounds zoom to the nearest 1%. Recommended for touchpad users.",
     scope: "client",
     config: true,
-    default: true,
+    default: false,
     type: Boolean
   })
   game.settings.register("zoom-pan-options", "zoom-speed-multiplier", {
