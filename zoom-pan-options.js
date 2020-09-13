@@ -53,7 +53,7 @@ function zoom(event) {
   const min = 1 / Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
   if (scale > max || scale < min) {
     canvas.pan({scale: scale > max ? max : min});
-    console.log(`CursorZoom | scale limit reached (${scale}).`)
+    console.log(`Zoom/Pan Options | scale limit reached (${scale}).`)
     return
   }
   // Acquire the cursor position transformed to Canvas coordinates
@@ -64,12 +64,6 @@ function zoom(event) {
   const y = canvas.stage.pivot.y + dy;
   canvas.pan({x, y, scale});
 }
-
-Hooks.on("init", function () {
-  Canvas.prototype._onMouseWheel = _onMouseWheel_Override;
-  cursorZoomEnabled = true
-  console.log("CursorZoom is done setting up!");
-});
 
 function pan(event) {
   if (event.deltaY !== 0) {
