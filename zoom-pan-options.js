@@ -45,7 +45,7 @@ function _constrainView_Override({x, y, scale}) {
     const max = CONFIG.Canvas.maxZoom;
     const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
     if (getSetting("disable-zoom-rounding"))
-      scale = Math.round(Math.clamped(scale, 1 / ratio, max) * 100) / 100;
+      scale = Math.clamped(scale, 1 / ratio, max);
     else
       scale = Math.round(Math.clamped(scale, 1 / ratio, max) * 100) / 100;
   } else {
@@ -153,5 +153,6 @@ Hooks.on("init", function () {
     type: Number
   })
   KeyboardManager.prototype._onWheel = _onWheel_Override;
+  Canvas.prototype._constrainView = _constrainView_Override
   console.log("Zoom/Pan Options is done setting up!");
 });
