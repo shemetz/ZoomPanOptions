@@ -4,6 +4,7 @@ function getSetting(settingName) {
   return game.settings.get('zoom-pan-options', settingName);
 }
 
+// TODO Disable Alt key if touchmode is false.
 function _onWheel_Override(event) {
   const touchpad = getSetting('touchpad-scroll');
 
@@ -21,7 +22,7 @@ function _onWheel_Override(event) {
     const isOsx = window.navigator.platform === 'MacIntel';
 
     /* These can become options easily */
-    const rotateKey = event.altKey;
+    const rotateKey = touchpad ? event.altKey : event.ctrlKey || event.metaKey ;
     const directionModifierKey = event.shiftKey; // changes pan direction
     const rotationModifierKey = event.shiftKey; // changes rotation amount
     const zoomKey = event.ctrlKey || event.metaKey;
