@@ -143,11 +143,6 @@ Hooks.on("init", function () {
     config: true,
     default: 1,
     type: Number,
-    range: {
-      min: 0.1,
-      max: 10,
-      step: 0.1,
-    },
   })
   game.settings.register("zoom-pan-options", "pan-speed-multiplier", {
     name: "Pan speed",
@@ -156,11 +151,6 @@ Hooks.on("init", function () {
     config: true,
     default: 1,
     type: Number,
-    range: {
-      min: 0.1,
-      max: 10,
-      step: 0.1,
-    },
   })
   game.settings.register("zoom-pan-options", "touchpad-rotation-threshold", {
     name: "Touchpad rotation sensitivity threshold",
@@ -169,11 +159,6 @@ Hooks.on("init", function () {
     config: true,
     default: 50,
     type: Number,
-    range: {
-      min: 1,
-      max: 200,
-      step: 1,
-    },
   })
   KeyboardManager.prototype._onWheel = _onWheel_Override;
   Canvas.prototype._constrainView = _constrainView_Override
