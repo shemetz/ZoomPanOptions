@@ -102,6 +102,7 @@ function zoom(event) {
 }
 
 function panWithTouchpad(event) {
+  cumulativeRotationDelta = 0  // (this doesn't really belong here but I just don't want it to carry over if user makes mistakes)
   const multiplier = 1 / canvas.stage.scale.x * getSetting('pan-speed-multiplier')
   const x = canvas.stage.pivot.x + event.deltaX * multiplier
   const y = canvas.stage.pivot.y + event.deltaY * multiplier
@@ -141,7 +142,12 @@ Hooks.on("init", function () {
     scope: "client",
     config: true,
     default: 1,
-    type: Number
+    type: Number,
+    range: {
+      min: 0.1,
+      max: 10,
+      step: 0.1,
+    },
   })
   game.settings.register("zoom-pan-options", "pan-speed-multiplier", {
     name: "Pan speed",
@@ -149,15 +155,25 @@ Hooks.on("init", function () {
     scope: "client",
     config: true,
     default: 1,
-    type: Number
+    type: Number,
+    range: {
+      min: 0.1,
+      max: 10,
+      step: 0.1,
+    },
   })
   game.settings.register("zoom-pan-options", "touchpad-rotation-threshold", {
     name: "Touchpad rotation sensitivity threshold",
-    hint: "Prevents over-sensitive token rotation. Defaults to 10. Applies to shift+panning (touchpad).",
+    hint: "Prevents over-sensitive token rotation. Defaults to 50. Applies to shift+panning (touchpad).",
     scope: "client",
     config: true,
-    default: 10,
-    type: Number
+    default: 50,
+    type: Number,
+    range: {
+      min: 1,
+      max: 200,
+      step: 1,
+    },
   })
   KeyboardManager.prototype._onWheel = _onWheel_Override;
   Canvas.prototype._constrainView = _constrainView_Override
