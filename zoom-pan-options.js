@@ -34,7 +34,7 @@ function _onWheel_Override(event) {
         ctrlKey: rotateKey, // shim alt where foundry expects ctrl for rotation
         deltaY: event.wheelDelta, // only the sign matters, use wheelDelta instead of relying on deltaY
         metaKey: event.metaKey,
-        shiftKey: modifierKey,
+        shiftKey: rotationModifierKey,
       });
     }
 
