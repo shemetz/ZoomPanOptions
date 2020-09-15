@@ -16,10 +16,12 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 ## Touchpad Scrolling (also useful for Magic Mouse)
 - Vertical mouse scroll will now pan up and down (instead of zooming)
 - Horizontal mouse scroll will now pan left and right
-- Panning with two fingers on a touchpad should use these two and should be nicer
+- Shift+scroll will now pan left and right
+- Panning with two fingers on a touchpad should pan
 - Ctrl+scroll will now zoom in and out (like previous vertical scroll) (instead of precisely rotating a token)
-- Pinching with two fingers on a touchpad should use this and should be nice
-- Shift+Ctrl+scroll will now precisely rotate a token (like previous ctrl+scroll)
+- Pinching with two fingers on a touchpad should zoom
+- Alt+scroll will now precisely rotate a token (like previous ctrl+scroll)
+- Alt+Shift+scroll will now rotate a token quickly (like previous shift+scroll)
 
 ## Zoom speed multiplier
 - Useful if your zoom is too sensitive, or not sensitive enough. A value of 0.1, 10, or 20 might work for you.
