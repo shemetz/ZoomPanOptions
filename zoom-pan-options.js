@@ -27,12 +27,13 @@ function _onWheel_Override(event) {
       if (touchpad && isShift) {
         cumulativeRotationDelta += event.deltaY
         const threshold = getSetting('touchpad-rotation-threshold')
-        if (Math.abs(cumulativeRotationDelta) >= threshold)
+        if (Math.abs(cumulativeRotationDelta) >= threshold) {
           cumulativeRotationDelta -= threshold * Math.sign(cumulativeRotationDelta)
           layer._onMouseWheel({
             deltaY: Math.sign(cumulativeRotationDelta), // only the sign matters
             isShift: false
           })
+        }
       } else
         layer._onMouseWheel(event)
     }
@@ -136,7 +137,7 @@ Hooks.on("init", function () {
   })
   game.settings.register("zoom-pan-options", "zoom-speed-multiplier", {
     name: "Zoom speed",
-    hint: "Multiplies zoom speed, affecting scaling speed. Defaults to 1 (5% zoom per mouse tick). A value of 0.2 might be better for touchpads.",
+    hint: "Multiplies zoom speed, affecting scaling speed. Defaults to 1 (5% zoom per mouse tick). 0.1 or 10 might be better for some touchpads.",
     scope: "client",
     config: true,
     default: 1,
