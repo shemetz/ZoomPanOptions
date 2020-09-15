@@ -5,8 +5,6 @@ function getSetting(settingName) {
   return game.settings.get("zoom-pan-options", settingName)
 }
 
-let cumulativeRotationDelta = 0
-
 function _onWheel_Override(event) {
   const touchpad = getSetting("touchpad-scroll")
   if (event.deltaY === 0 && !touchpad)
@@ -24,18 +22,17 @@ function _onWheel_Override(event) {
 
     // Case 1 - rotate tokens or tiles
     if (layer instanceof PlaceablesLayer && (isShift || (isCtrl && !touchpad))) {
-      if (touchpad && isShift) {
-        cumulativeRotationDelta += event.deltaY
-        const threshold = getSetting('touchpad-rotation-threshold')
-        if (Math.abs(cumulativeRotationDelta) >= threshold) {
-          cumulativeRotationDelta -= threshold * Math.sign(cumulativeRotationDelta)
-          layer._onMouseWheel({
-            deltaY: Math.sign(cumulativeRotationDelta), // only the sign matters
-            isShift: false
-          })
-        }
-      } else
+      if (touchpad && isShift && isCtrl) {
+        // Shift+Ctrl on touchpad will do what Ctrl+scroll used to do (rotate in 15° increments)
+        layer._onMouseWheel({
+          deltaY: event.deltaY, // only the sign matters, actually
+          shiftKey: false,
+          ctrlKey: event.ctrlKey,
+          metaKey: event.metaKey,
+        })
+      } else {
         layer._onMouseWheel(event)
+      }
     }
     // Case 2 - zoom the canvas (touchpad pinch, or normal scroll)
     else if (isCtrl || !touchpad) zoom(event)
@@ -51,6 +48,7 @@ function _constrainView_Override({x, y, scale}) {
   if (Number.isNumeric(scale) && (scale !== this.stage.scale.x)) {
     const max = CONFIG.Canvas.maxZoom;
     const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
+    // override changes are just for this part:
     if (getSetting("disable-zoom-rounding"))
       scale = Math.clamped(scale, 1 / ratio, max);
     else
@@ -102,7 +100,6 @@ function zoom(event) {
 }
 
 function panWithTouchpad(event) {
-  cumulativeRotationDelta = 0  // (this doesn't really belong here but I just don't want it to carry over if user makes mistakes)
   const multiplier = 1 / canvas.stage.scale.x * getSetting('pan-speed-multiplier')
   const x = canvas.stage.pivot.x + event.deltaX * multiplier
   const y = canvas.stage.pivot.y + event.deltaY * multiplier
@@ -150,14 +147,6 @@ Hooks.on("init", function () {
     scope: "client",
     config: true,
     default: 1,
-    type: Number,
-  })
-  game.settings.register("zoom-pan-options", "touchpad-rotation-threshold", {
-    name: "Touchpad rotation sensitivity threshold",
-    hint: "Prevents over-sensitive token rotation. Defaults to 50. Applies to shift+panning (touchpad).",
-    scope: "client",
-    config: true,
-    default: 50,
     type: Number,
   })
   KeyboardManager.prototype._onWheel = _onWheel_Override;
