@@ -12,14 +12,13 @@ FoundryVTT module to change mouse scroll behavior. It has four settings, which c
 - Panning with two fingers on a touchpad should use these two and should be nicer
 - Ctrl+scroll will now zoom in and out (like previous vertical scroll) (instead of precisely rotating a token)
 - Pinching with two fingers on a touchpad should use this and should be nice
-- Shift+scroll will now precisely rotate a token (like previous ctrl+scroll)
-- Shift+Ctrl+scroll will now rotate a token at 45° increments (like previous shift+scroll)
+- Shift+scroll will now precisely rotate a token (like previous ctrl+scroll, but a bit nicer)
 
 ## Zoom speed multiplier
 - Useful if your zoom is too sensitive.
 
-## Precise rotation multiplier
-- Useful if your token rotation is too sensitive. Applies to ctrl+scrolling (mouse) or shift+panning (touchpad)
+## Touchpad rotation sensitivity threshold
+- Prevents over-sensitive token rotation. Applies to shift+panning (touchpad).
 
 # Credits
 

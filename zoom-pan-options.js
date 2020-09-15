@@ -5,6 +5,8 @@ function getSetting(settingName) {
   return game.settings.get("zoom-pan-options", settingName)
 }
 
+let cumulativeRotationDelta = 0
+
 function _onWheel_Override(event) {
   const touchpad = getSetting("touchpad-scroll")
   if (event.deltaY === 0 && !touchpad)
@@ -21,15 +23,19 @@ function _onWheel_Override(event) {
     let isCtrl = event.ctrlKey || event.metaKey, isShift = event.shiftKey;
 
     // Case 1 - rotate tokens or tiles
-    if (layer instanceof PlaceablesLayer && (isShift || (isCtrl && !touchpad)))
-      if (touchpad && isShift)
-        // handle shift+drag for small increments (45° inc will have to be with the shift+arrows method)
-        layer._onMouseWheel({
-          deltaY: event.deltaY * getSetting('precise-rotation-multiplier'),
-          isShift: false
-        })
-      else
+    if (layer instanceof PlaceablesLayer && (isShift || (isCtrl && !touchpad))) {
+      if (touchpad && isShift) {
+        cumulativeRotationDelta += event.deltaY
+        const threshold = getSetting('touchpad-rotation-threshold')
+        if (Math.abs(cumulativeRotationDelta) >= threshold)
+          cumulativeRotationDelta -= threshold * Math.sign(cumulativeRotationDelta)
+          layer._onMouseWheel({
+            deltaY: Math.sign(cumulativeRotationDelta), // only the sign matters
+            isShift: false
+          })
+      } else
         layer._onMouseWheel(event)
+    }
     // Case 2 - zoom the canvas (touchpad pinch, or normal scroll)
     else if (isCtrl || !touchpad) zoom(event)
     // Case 3 - pan the canvas (touchpad scroll)
@@ -122,10 +128,10 @@ Hooks.on("init", function () {
   })
   game.settings.register("zoom-pan-options", "disable-zoom-rounding", {
     name: "Disable zoom rounding",
-    hint: "Disables default Foundry behavior, which rounds zoom to the nearest 1%. Recommended for touchpad users.",
+    hint: "Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.",
     scope: "client",
     config: true,
-    default: false,
+    default: true,
     type: Boolean
   })
   game.settings.register("zoom-pan-options", "zoom-speed-multiplier", {
@@ -144,12 +150,12 @@ Hooks.on("init", function () {
     default: 1,
     type: Number
   })
-  game.settings.register("zoom-pan-options", "precise-rotation-multiplier", {
-    name: "Precise rotation speed",
-    hint: "Multiplies precise rotation. Defaults to 1. Applies to ctrl+scrolling (mouse) or shift+panning (touchpad).",
+  game.settings.register("zoom-pan-options", "touchpad-rotation-threshold", {
+    name: "Touchpad rotation sensitivity threshold",
+    hint: "Prevents over-sensitive token rotation. Defaults to 10. Applies to shift+panning (touchpad).",
     scope: "client",
     config: true,
-    default: 1,
+    default: 10,
     type: Number
   })
   KeyboardManager.prototype._onWheel = _onWheel_Override;
