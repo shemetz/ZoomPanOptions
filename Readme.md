@@ -1,6 +1,10 @@
-# Zoom/Pan Options
+# [Zoom/Pan Options](https://foundryvtt.com/packages/zoom-pan-options/)
 
 FoundryVTT module to change mouse scroll behavior. It has four settings, which can be toggled individually, and stored locally (per client).
+
+To install, browse for it in the module browser, or [directly copy the manifest link (module.json)](https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/module.json).
+
+# Features
 
 ## Zoom around cursor
 - When zooming in and out, the camera will zoom "around" the cursor, like in many other applications.
@@ -28,4 +32,5 @@ Thanks, mrkwnzl#7407, for the touchpad support!
 Apparently this module was developed at the same time this one was, and can do something very similar. Oops!
 
 # [Cursor Zoom](https://github.com/itamarcu/CursorZoom)
-My old foundry module, that only had the "Zoom around cursor" feature, and did not allow configuring it in the setting.
+My old foundry module, that only had the "Zoom around cursor" feature, and did not allow configuring it in the settings for each player.
+If you were a user of Cursor Zoom, please uninstall it and install this module. Your players will be able to each set their own preference.
