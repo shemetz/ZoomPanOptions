@@ -156,9 +156,9 @@ Hooks.on('init', function () {
     config: true,
     type: String,
     choices: {
-      'Default': 'Default: Standard foundry behavior',
-      'Touchpad': 'Touchpad: Drag, Pinch, rotate with Shift or Ctrl+Shift',
-      'Alternative': 'Alternative: can pan with Shift, Rotate while holding Alt',
+      'Default': 'Default: standard foundry behavior',
+      'Touchpad': 'Touchpad: drag, pinch, rotate with Shift or Ctrl+Shift',
+      'Alternative': 'Alternative: can pan with Shift, rotate while holding Alt',
     },
     default: 'Default',
   })

@@ -19,9 +19,8 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Rotate with Shift+scroll and Ctrl+Shift+scroll.
 
 ## "Alternative" mode
-- Pan with touchpad, or with mouse: vertical mouse scroll will pan up and down, and horizontal mouse scroll will pan left and right
+- Pan with touchpad, or with mouse: vertical mouse scroll will pan up and down, and horizontal mouse scroll will pan left and right.
 - Zoom with two-finger pinch or Ctrl+scroll.
-- Pinching with two fingers on a touchpad should zoom
 - Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
 
 ## Pan speed multiplier
