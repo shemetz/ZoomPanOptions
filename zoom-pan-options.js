@@ -63,25 +63,25 @@ function _constrainView_Override ({ x, y, scale }) {
   const d = canvas.dimensions
 
   // Constrain the maximum zoom level
-  if (Number.isNumeric(scale) && scale !== this.stage.scale.x) {
+  if (Number.isNumeric(scale) && scale !== canvas.stage.scale.x) {
     const max = CONFIG.Canvas.maxZoom
     const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max)
     // override changes are just for this part:
     if (getSetting('disable-zoom-rounding')) scale = Math.clamped(scale, 1 / ratio, max)
     else scale = Math.round(Math.clamped(scale, 1 / ratio, max) * 100) / 100
   } else {
-    scale = this.stage.scale.x
+    scale = canvas.stage.scale.x
   }
 
   // Constrain the pivot point using the new scale
-  if (Number.isNumeric(x) && x !== this.stage.pivot.x) {
+  if (Number.isNumeric(x) && x !== canvas.stage.pivot.x) {
     const padw = 0.4 * (window.innerWidth / scale)
     x = Math.clamped(x, -padw, d.width + padw)
-  } else x = this.stage.pivot.x
-  if (Number.isNumeric(y) && x !== this.stage.pivot.y) {
+  } else x = canvas.stage.pivot.x
+  if (Number.isNumeric(y) && x !== canvas.stage.pivot.y) {
     const padh = 0.4 * (window.innerHeight / scale)
     y = Math.clamped(y, -padh, d.height + padh)
-  } else y = this.stage.pivot.y
+  } else y = canvas.stage.pivot.y
 
   // Return the constrained view dimensions
   return { x, y, scale }
