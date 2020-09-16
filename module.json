@@ -1,12 +1,12 @@
 {
   "name": "zoom-pan-options",
   "title": "Zoom/Pan Options",
-  "description": "Adds cursor-based zoom, touchpad zoom/pan support, and other options.",
+  "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
   "author": "shem",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "minimumCoreVersion": "0.6.0",
   "compatibleCoreVersion": "0.6.6",
-  "scripts": [
+  "esmodules": [
     "zoom-pan-options.js"
   ],
   "url": "https://github.com/itamarcu/ZoomPanOptions",
