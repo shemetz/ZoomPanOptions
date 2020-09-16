@@ -179,7 +179,7 @@ Hooks.once('setup', function () {
     MODULE_ID,
     'KeyboardManager.prototype._onWheel',
     (onwheel, event) => {
-      _onWheel_Override(event)
+      return _onWheel_Override(event)
     },
     'OVERRIDE'
   )
@@ -187,7 +187,7 @@ Hooks.once('setup', function () {
     MODULE_ID,
     'Canvas.prototype._constrainView',
     (_constrainView, obj) => {
-      _constrainView_Override(obj)
+      return _constrainView_Override(obj)
     },
     'OVERRIDE' // only overrides a tiny part of the function... would be nice if foundry made it more modular
   )
