@@ -6,8 +6,11 @@ function getSetting (settingName) {
   return game.settings.get(MODULE_ID, settingName)
 }
 
+/**
+ * (note: return value is meaningless here)
+ */
 function _onWheel_Override (event) {
-  const touchpad = getSetting('touchpad-scroll')
+  const mode = getSetting('pan-zoom-mode')
 
   // Prevent zooming the entire browser window
   if (event.ctrlKey) {
@@ -16,50 +19,54 @@ function _onWheel_Override (event) {
 
   // Handle wheel events for the canvas if it is ready and if it is our hover target
   let hover = document.elementFromPoint(event.clientX, event.clientY)
+  if (!(canvas && canvas.ready && hover && hover.id === 'board')) return null
 
-  if (canvas && canvas.ready && hover && hover.id === 'board') {
-    event.preventDefault()
-    const layer = canvas.activeLayer
-    const isOsx = window.navigator.platform === 'MacIntel'
+  event.preventDefault()
+  const layer = canvas.activeLayer
 
-    /* These can become options easily */
-    const rotateKey = touchpad ? event.altKey : event.ctrlKey || event.metaKey
-    const directionModifierKey = event.shiftKey // changes pan direction
-    const rotationModifierKey = event.shiftKey // changes rotation amount
-    const zoomKey = event.ctrlKey || event.metaKey
-
-    // Case 1 - handle rotation of objects
-    // default to Alt for rotation as we are moving Shift to horizontal scroll and Ctrl is reserved for pinch zooming (OSX)
-    if (layer instanceof PlaceablesLayer && (rotateKey || (rotationModifierKey && !touchpad))) {
-      // return so we don't proceed
+  // Case 1 - rotate stuff
+  if (layer instanceof PlaceablesLayer) {
+    // (I know `(event.ctrlKey || event.shiftKey)` can be to the outer `if`, but this is more readable)
+    if (mode === 'Default' && (event.ctrlKey || event.shiftKey)) {
+      return layer._onMouseWheel(event)
+    }
+    if (mode === 'Touchpad' && (event.ctrlKey || event.shiftKey)) {
       return layer._onMouseWheel({
-        ctrlKey: rotateKey, // shim alt where foundry expects ctrl for rotation
-        deltaY: event.wheelDelta, // only the sign matters, use wheelDelta instead of relying on deltaY
-        metaKey: event.metaKey,
-        shiftKey: rotationModifierKey,
+        deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
+        shiftKey: event.shiftKey && !event.ctrlKey,
       })
     }
-
-    // Case 2 - zoom the canvas (touchpad pinch, or normal scroll)
-    if (zoomKey || !touchpad) {
-      return zoom(event)
-    }
-
-    // Cast 3 - pan the canvas but flip X and Y (touchpad scroll + SHIFT and not OSX)
-    if (touchpad && !isOsx && directionModifierKey) {
-      // noinspection JSSuspiciousNameCombination
-      return panWithTouchpad({
-        deltaX: event.deltaY,
-        deltaY: event.deltaX,
+    if (mode === 'Alternative' && event.metaKey && (event.ctrlKey || event.shiftKey)) {
+      return layer._onMouseWheel({
+        deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
+        shiftKey: event.shiftKey,
       })
     }
-
-    // Case 4 - pan the canvas (touchpad scroll)
-    panWithTouchpad(event)
   }
+
+  // Case 2 - zoom the canvas
+  // (written to be readable)
+  if (
+    mode === 'Default'
+    || (mode === 'Touchpad' && event.ctrlKey)
+    || (mode === 'Alternative' && event.ctrlKey)
+  ) {
+    return zoom(event)
+  }
+
+  // Cast 3 - pan the canvas horizontally (shift+scroll)
+  if (mode === 'Alternative' && event.shiftKey) {
+    // noinspection JSSuspiciousNameCombination
+    return panWithMultiplier({
+      deltaX: event.deltaY,
+    })
+  }
+
+  // Case 4 - pan the canvas in the direction of the mouse/touchpad event
+  panWithMultiplier(event)
 }
 
-function _constrainView_Override ({ x, y, scale }) {
+function _constrainView_Override ({ x, y, scale } = {}) {
   const d = canvas.dimensions
 
   // Constrain the maximum zoom level
@@ -119,7 +126,7 @@ function zoom (event) {
   canvas.pan({ x, y, scale })
 }
 
-function panWithTouchpad (event) {
+function panWithMultiplier (event) {
   const multiplier = (1 / canvas.stage.scale.x) * getSetting('pan-speed-multiplier')
   const x = canvas.stage.pivot.x + event.deltaX * multiplier
   const y = canvas.stage.pivot.y + event.deltaY * multiplier
@@ -136,14 +143,28 @@ Hooks.on('init', function () {
     default: true,
     type: Boolean,
   })
-  game.settings.register('zoom-pan-options', 'touchpad-scroll', {
-    name: 'Touchpad/Scrollwheel Mode',
-    hint:
-      'Pan with two-finger drag (or scroll wheel, Shift + scroll for Horizontal). Zoom with two-finger pinch (or Ctrl + scroll). Rotate by holding Alt, or Alt+Shift for 45° angles.',
+  game.settings.register('zoom-pan-options', 'pan-zoom-mode', {
+    name: 'Pan/Zoom Mode',
+    hint: `
+      <p>
+      <b>Default</b>: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.
+      </p>
+      <p>
+      <b>Touchpad</b>: Pan with two-finger drag. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Shift+scroll and Ctrl+Shift+scroll.
+      </p>
+      <p>
+      <b>Alternative</b>: Pan with two-finger drag or scroll or shift+scroll. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
+      </p>
+    `,
     scope: 'client',
     config: true,
-    default: false,
-    type: Boolean,
+    type: String,
+    choices: {
+      'Default': 'Default',
+      'Touchpad': 'Touchpad',
+      'Alternative': 'Alternative',
+    },
+    default: 'Default',
   })
   game.settings.register('zoom-pan-options', 'disable-zoom-rounding', {
     name: 'Disable zoom rounding',
@@ -166,7 +187,7 @@ Hooks.on('init', function () {
   game.settings.register('zoom-pan-options', 'pan-speed-multiplier', {
     name: 'Pan speed',
     hint:
-      'Only used in touchpad mode. Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.',
+      'Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.',
     scope: 'client',
     config: true,
     default: 1,
