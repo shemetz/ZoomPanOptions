@@ -3,7 +3,7 @@
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
   "author": "shem",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "minimumCoreVersion": "0.6.0",
   "compatibleCoreVersion": "0.6.6",
   "esmodules": [
