@@ -146,23 +146,19 @@ Hooks.on('init', function () {
   game.settings.register('zoom-pan-options', 'pan-zoom-mode', {
     name: 'Pan/Zoom Mode',
     hint: `
-      <p>
-      <b>Default</b>: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.
-      </p>
-      <p>
-      <b>Touchpad</b>: Pan with two-finger drag. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Shift+scroll and Ctrl+Shift+scroll.
-      </p>
-      <p>
-      <b>Alternative</b>: Pan with two-finger drag or scroll or shift+scroll. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
-      </p>
+      Default: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.
+||
+      Touchpad: Pan with two-finger drag. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Shift+scroll and Ctrl+Shift+scroll.
+||
+      Alternative: Pan with two-finger drag or scroll or shift+scroll. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
     `,
     scope: 'client',
     config: true,
     type: String,
     choices: {
-      'Default': 'Default',
-      'Touchpad': 'Touchpad',
-      'Alternative': 'Alternative',
+      'Default': 'Default: Standard foundry behavior',
+      'Touchpad': 'Touchpad: Drag, Pinch, rotate with Shift or Ctrl+Shift',
+      'Alternative': 'Alternative: can pan with Shift, Rotate while holding Alt',
     },
     default: 'Default',
   })
