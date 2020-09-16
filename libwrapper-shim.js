@@ -48,7 +48,7 @@ Hooks.once('init', () => {
 
 	//************** USER CUSTOMIZABLE:
 	// Whether to warn GM that the fallback is being used
-	const WARN_FALLBACK = true;
+	const WARN_FALLBACK = false;
 
 	// Set up the ready hook that shows the "libWrapper not installed" warning dialog
 	if(WARN_FALLBACK) {
