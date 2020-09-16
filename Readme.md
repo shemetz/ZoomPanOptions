@@ -1,6 +1,6 @@
 # [Zoom/Pan Options](https://foundryvtt.com/packages/zoom-pan-options/)
 
-FoundryVTT module to change mouse scroll behavior. It has four settings, which can be toggled individually, and stored locally (per client).
+FoundryVTT module to change mouse scroll behavior. It has several settings, which can be toggled individually, and stored locally (per client).
 
 To install, browse for it in the module browser, or [directly copy the manifest link (module.json)](https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/module.json).
 
