@@ -26,11 +26,10 @@ function _onWheel_Override (event) {
 
   // Case 1 - rotate stuff
   if (layer instanceof PlaceablesLayer) {
-    // (I know `(event.ctrlKey || event.shiftKey)` can be to the outer `if`, but this is more readable)
     if (mode === 'Default' && (event.ctrlKey || event.shiftKey)) {
       return layer._onMouseWheel(event)
     }
-    if (mode === 'Touchpad' && (event.ctrlKey || event.shiftKey)) {
+    if (mode === 'Touchpad' && event.shiftKey) {
       return layer._onMouseWheel({
         deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
         shiftKey: event.shiftKey && !event.ctrlKey,
