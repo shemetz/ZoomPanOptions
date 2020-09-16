@@ -34,10 +34,9 @@ While Checked, the following are true:
 
 # Credits
 
-Thanks, mrkwnzl#7407, for the touchpad support!
+Thanks to mrkwnzl#7407 for the touchpad support!
 
-# [Canvas Scroll](https://github.com/ElfFriend-DnD/foundryvtt-canvasScroll)
-Apparently this module was developed at the same time this one was, and can do something very similar. @akrigline helped merge his features into this module.
+Thanks to akrigline/Calego for merging with CanvasScroll! 
 
 # [Cursor Zoom](https://github.com/itamarcu/CursorZoom)
 My old foundry module, that only had the "Zoom around cursor" feature, and did not allow configuring it in the settings for each player.
