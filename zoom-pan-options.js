@@ -1,4 +1,4 @@
-import { libWrapper } from './libwrapper-shim'
+import { libWrapper } from './libwrapper-shim.js'
 
 const MODULE_ID = 'zoom-pan-options'
 
