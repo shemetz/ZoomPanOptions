@@ -1,7 +1,9 @@
-console.log('zoom-pan-options |', 'Setting up...');
+import { libWrapper } from './libwrapper-shim';
+
+const MODULE_ID = 'zoom-pan-options'
 
 function getSetting(settingName) {
-  return game.settings.get('zoom-pan-options', settingName);
+  return game.settings.get(MODULE_ID, settingName)
 }
 
 // TODO Disable Alt key if touchmode is false.
@@ -125,6 +127,7 @@ function panWithTouchpad(event) {
 }
 
 Hooks.on('init', function () {
+  console.log('Initializing Zoom/Pan Options');
   game.settings.register('zoom-pan-options', 'zoom-around-cursor', {
     name: 'Zoom around cursor',
     hint: 'Center zooming around cursor. Does not apply to zooming with pageup or pagedown.',
@@ -169,10 +172,24 @@ Hooks.on('init', function () {
     default: 1,
     type: Number,
   });
+});
 
-  KeyboardManager.prototype._onWheel = _onWheel_Override;
-
-  Canvas.prototype._constrainView = _constrainView_Override;
-
-  console.log('zoom-pan-options |', 'Done setting up!');
+Hooks.once('setup', function () {
+  libWrapper.register(
+    MODULE_ID,
+    'KeyboardManager.prototype._onWheel',
+    (onwheel, event) => {
+      _onWheel_Override(event)
+    },
+    'OVERRIDE'
+  )
+  libWrapper.register(
+    MODULE_ID,
+    'Canvas.prototype._constrainView',
+    (_constrainView, obj) => {
+      _constrainView_Override(obj)
+    },
+    'OVERRIDE' // only overrides a tiny part of the function... would be nice if foundry made it more modular
+  )
+  console.log('Done setting up Zoom/Pan Options.');
 });

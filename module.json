@@ -11,5 +11,7 @@
   ],
   "url": "https://github.com/itamarcu/ZoomPanOptions",
   "manifest": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/module.json",
-  "download": "https://github.com/itamarcu/ZoomPanOptions/archive/master.zip"
+  "download": "https://github.com/itamarcu/ZoomPanOptions/archive/master.zip",
+  "readme": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/README.md",
+  "bugs": "https://github.com/itamarcu/ZoomPanOptions/issues"
 }
