@@ -6,7 +6,6 @@ function getSetting (settingName) {
   return game.settings.get(MODULE_ID, settingName)
 }
 
-// TODO Disable Alt key if touchmode is false.
 function _onWheel_Override (event) {
   const touchpad = getSetting('touchpad-scroll')
 
@@ -48,6 +47,7 @@ function _onWheel_Override (event) {
 
     // Cast 3 - pan the canvas but flip X and Y (touchpad scroll + SHIFT and not OSX)
     if (touchpad && !isOsx && directionModifierKey) {
+      // noinspection JSSuspiciousNameCombination
       return panWithTouchpad({
         deltaX: event.deltaY,
         deltaY: event.deltaX,
@@ -106,7 +106,7 @@ function zoom (event) {
 
   if (scale > max || scale < min) {
     canvas.pan({ scale: scale > max ? max : min })
-    console.log('zoom-pan-options |', `scale limit reached (${scale}).`)
+    console.log('Zoom/Pan Options |', `scale limit reached (${scale}).`)
     return
   }
 
@@ -139,7 +139,7 @@ Hooks.on('init', function () {
   game.settings.register('zoom-pan-options', 'touchpad-scroll', {
     name: 'Touchpad/Scrollwheel Mode',
     hint:
-      'Pan with two-finger drag (or scroll wheel, Shift + scroll for Horizontal). Zoom with two-finger pinch (or Ctrl + scroll).',
+      'Pan with two-finger drag (or scroll wheel, Shift + scroll for Horizontal). Zoom with two-finger pinch (or Ctrl + scroll). Rotate by holding Alt, or Alt+Shift for 45° angles.',
     scope: 'client',
     config: true,
     default: false,
