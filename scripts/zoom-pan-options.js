@@ -194,18 +194,18 @@ Hooks.once('setup', function () {
   libWrapper.register(
     MODULE_ID,
     'KeyboardManager.prototype._onWheel',
-    (onwheel, event) => {
+    (event) => {
       return _onWheel_Override(event)
     },
-    'MIXED'
+    'OVERRIDE'
   )
   libWrapper.register(
     MODULE_ID,
     'Canvas.prototype._constrainView',
-    (_constrainView, obj) => {
+    (obj) => {
       return _constrainView_Override(obj)
     },
-    'MIXED' // only overrides a tiny part of the function... would be nice if foundry made it more modular
+    'OVERRIDE' // only overrides a tiny part of the function... would be nice if foundry made it more modular
   )
   console.log('Done setting up Zoom/Pan Options.')
 })
