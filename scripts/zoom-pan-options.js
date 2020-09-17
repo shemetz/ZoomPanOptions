@@ -134,7 +134,7 @@ function panWithMultiplier (event) {
 
 Hooks.on('init', function () {
   console.log('Initializing Zoom/Pan Options')
-  game.settings.register('zoom-pan-options', 'zoom-around-cursor', {
+  game.settings.register(MODULE_ID, 'zoom-around-cursor', {
     name: 'Zoom around cursor',
     hint: 'Center zooming around cursor. Does not apply to zooming with pageup or pagedown.',
     scope: 'client',
@@ -142,7 +142,7 @@ Hooks.on('init', function () {
     default: true,
     type: Boolean,
   })
-  game.settings.register('zoom-pan-options', 'pan-zoom-mode', {
+  game.settings.register(MODULE_ID, 'pan-zoom-mode', {
     name: 'Pan/Zoom Mode',
     hint: `
       Default: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.
@@ -161,7 +161,7 @@ Hooks.on('init', function () {
     },
     default: 'Default',
   })
-  game.settings.register('zoom-pan-options', 'disable-zoom-rounding', {
+  game.settings.register(MODULE_ID, 'disable-zoom-rounding', {
     name: 'Disable zoom rounding',
     hint:
       'Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.',
@@ -170,7 +170,7 @@ Hooks.on('init', function () {
     default: true,
     type: Boolean,
   })
-  game.settings.register('zoom-pan-options', 'zoom-speed-multiplier', {
+  game.settings.register(MODULE_ID, 'zoom-speed-multiplier', {
     name: 'Zoom speed',
     hint:
       'Multiplies zoom speed, affecting scaling speed. Defaults to 1 (5% zoom per mouse tick). 0.1 or 10 might be better for some touchpads.',
@@ -179,7 +179,7 @@ Hooks.on('init', function () {
     default: 1,
     type: Number,
   })
-  game.settings.register('zoom-pan-options', 'pan-speed-multiplier', {
+  game.settings.register(MODULE_ID, 'pan-speed-multiplier', {
     name: 'Pan speed',
     hint:
       'Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.',
