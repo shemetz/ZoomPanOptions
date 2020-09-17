@@ -197,7 +197,7 @@ Hooks.once('setup', function () {
     (onwheel, event) => {
       return _onWheel_Override(event)
     },
-    'OVERRIDE'
+    'MIXED'
   )
   libWrapper.register(
     MODULE_ID,
@@ -205,7 +205,7 @@ Hooks.once('setup', function () {
     (_constrainView, obj) => {
       return _constrainView_Override(obj)
     },
-    'OVERRIDE' // only overrides a tiny part of the function... would be nice if foundry made it more modular
+    'MIXED' // only overrides a tiny part of the function... would be nice if foundry made it more modular
   )
   console.log('Done setting up Zoom/Pan Options.')
 })
