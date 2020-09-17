@@ -15,15 +15,20 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 ## Disable zoom rounding
 - Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.
  
+## "Default" mode
+- Same as the Foundry behavior
+
 ## "Touchpad" mode
 - Pan with two-finger drag on the touchpad.
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Shift+scroll and Ctrl+Shift+scroll.
+- (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
 ## "Alternative" mode
 - Pan with touchpad, or with mouse: vertical mouse scroll will pan up and down, and horizontal mouse scroll will pan left and right.
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
+- (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
 ## Pan speed multiplier
 - Only used in touchpad and alternative modes. Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.

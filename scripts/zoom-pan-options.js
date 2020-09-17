@@ -11,9 +11,12 @@ function getSetting (settingName) {
  */
 function _onWheel_Override (event) {
   const mode = getSetting('pan-zoom-mode')
+  const shift = event.shiftKey
+  const alt = event.altKey
+  const ctrlOrMeta = event.ctrlKey || event.metaKey  // meta key (cmd on mac, winkey in windows) will behave like ctrl
 
   // Prevent zooming the entire browser window
-  if (event.ctrlKey) {
+  if (ctrlOrMeta) {
     event.preventDefault()
   }
 
@@ -26,19 +29,19 @@ function _onWheel_Override (event) {
 
   // Case 1 - rotate stuff
   if (layer instanceof PlaceablesLayer) {
-    if (mode === 'Default' && (event.ctrlKey || event.metaKey || event.shiftKey)) {
+    if (mode === 'Default' && (ctrlOrMeta || shift)) {
       return layer._onMouseWheel(event)
     }
-    if (mode === 'Touchpad' && event.shiftKey) {
+    if (mode === 'Touchpad' && shift) {
       return layer._onMouseWheel({
         deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
-        shiftKey: event.shiftKey && !event.ctrlKey,
+        shiftKey: shift && !ctrlOrMeta,
       })
     }
-    if (mode === 'Alternative' && event.altKey && (event.ctrlKey || event.shiftKey)) {
+    if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
       return layer._onMouseWheel({
         deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
-        shiftKey: event.shiftKey,
+        shiftKey: shift,
       })
     }
   }
@@ -47,14 +50,14 @@ function _onWheel_Override (event) {
   // (written to be readable)
   if (
     mode === 'Default'
-    || (mode === 'Touchpad' && event.ctrlKey)
-    || (mode === 'Alternative' && event.ctrlKey)
+    || (mode === 'Touchpad' && ctrlOrMeta)
+    || (mode === 'Alternative' && ctrlOrMeta)
   ) {
     return zoom(event)
   }
 
   // Cast 3 - pan the canvas horizontally (shift+scroll)
-  if (mode === 'Alternative' && event.shiftKey) {
+  if (mode === 'Alternative' && shift) {
     // noinspection JSSuspiciousNameCombination
     return panWithMultiplier({
       deltaX: event.deltaY,
