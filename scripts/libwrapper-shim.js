@@ -17,7 +17,8 @@ Hooks.once('init', () => {
 	libWrapper = class {
 		static get is_fallback() { return true };
 
-		static register(module, target, fn) {
+		// fixing behavior of OVERRIDE; see https://github.com/ruipin/fvtt-lib-wrapper/issues/1
+		static register(module, target, fn, type) {
 			const is_setter = target.endsWith('#set');
 			target = !is_setter ? target : target.slice(0, -4);
 			const split = target.split('.');
@@ -29,7 +30,9 @@ Hooks.once('init', () => {
 			const descriptor = Object.getOwnPropertyDescriptor(obj, fn_name);
 			if(descriptor.value) {
 				const original = obj[fn_name];
-				obj[fn_name] = function() { return fn.call(this, original, ...arguments); };
+				// fixing behavior of OVERRIDE; see https://github.com/ruipin/fvtt-lib-wrapper/issues/1
+				if (type === 'OVERRIDE') {obj[fn_name] = function () { return fn.call(this, original, ...arguments) }}
+				else {obj[fn_name] = function () { return fn.call(this, original, ...arguments) }}
 				return;
 			}
 
