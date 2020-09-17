@@ -9,8 +9,8 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 # Features
 
 ## Zoom around cursor
-- When zooming in and out, the camera will zoom "around" the cursor, like in many other applications.
-- This does not affect PageUp, PageDown, or Numpad +/-. Those will still zoom into or out of the center of the screen.
+- When zooming in and out, the camera will stay focused on the cursor, like in many other applications.
+- This does not affect PageUp, PageDown, or Numpad +/-. Those will still zoom focused on the center of the screen.
 
 ## Disable zoom rounding
 - Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.
@@ -33,9 +33,9 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 
 # Credits
 
-Thanks to mrkwnzl#7407 for the touchpad support!
+Thanks to mrkwnzl#7407 for the touchpad support and testing!
 
-Thanks to akrigline/Calego for merging with CanvasScroll! 
+Thanks to akrigline/Calego for merging with CanvasScroll and helping with libwrapper and workflows! 
 
 # [Cursor Zoom](https://github.com/itamarcu/CursorZoom)
 My old foundry module, that only had the "Zoom around cursor" feature, and did not allow configuring it in the settings for each player.
