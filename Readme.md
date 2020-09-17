@@ -1,5 +1,7 @@
 # [Zoom/Pan Options](https://foundryvtt.com/packages/zoom-pan-options/)
 
+![Latest Release Download Count](https://img.shields.io/badge/dynamic/json?label=Downloads&query=assets%5B1%5D.download_count&url=https%3A%2F%2Fapi.github.com%2Frepos%2Fitamarcu%2FZoomPanOptions%2Freleases%2Flatest)
+
 FoundryVTT module to change mouse scroll behavior. It has several settings, which can be toggled individually, and stored locally (per client).
 
 To install, browse for it in the module browser, or [directly copy the manifest link (module.json)](https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/module.json).
