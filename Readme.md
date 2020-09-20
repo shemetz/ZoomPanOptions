@@ -36,7 +36,11 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Only used in touchpad and alternative modes. Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.
 
 ## Zoom speed multiplier
-- Useful if your zoom is too sensitive, or not sensitive enough. A value of 0.1, 10, or 20 might work for you.
+- Useful if your zoom is too sensitive, or not sensitive enough.
+- Set to 0 for default Foundry behavior (5% zoom per mouse tick, always).
+- Set to 1 for zooming based on scroll delta, which should be similar to default zoom for most common mouse types.
+- Set to 0.1 for slower zooming, or 10 for faster zooming.
+- Technically you can give this a negative value to flip your zoom directions, if you're an oddball. 
 
 # Credits
 

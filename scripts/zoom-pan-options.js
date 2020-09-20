@@ -102,6 +102,8 @@ function _constrainView_Override ({ x, y, scale } = {}) {
 function zoom (event) {
   const multiplier = getSetting('zoom-speed-multiplier')
   let dz = -event.deltaY * 0.0005 * multiplier + 1
+  // default foundry behavior if zoom-speed-multiplier is 0
+  if (multiplier === 0) dz = event.deltaY < 0 ? 1.05 : 0.95
 
   if (!getSetting('zoom-around-cursor')) {
     canvas.pan({ scale: dz * canvas.stage.scale.x })
@@ -176,10 +178,10 @@ Hooks.on('init', function () {
   game.settings.register(MODULE_ID, 'zoom-speed-multiplier', {
     name: 'Zoom speed',
     hint:
-      'Multiplies zoom speed, affecting scaling speed. Defaults to 1 (5% zoom per mouse tick). 0.1 or 10 might be better for some touchpads.',
+      'Multiplies zoom speed, affecting scaling speed. 0.1 or 10 might be better for some touchpads. 0 for default Foundry behavior.',
     scope: 'client',
     config: true,
-    default: 1,
+    default: 0,
     type: Number,
   })
   game.settings.register(MODULE_ID, 'pan-speed-multiplier', {
