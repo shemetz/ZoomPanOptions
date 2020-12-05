@@ -16,6 +16,9 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 
 ## Disable zoom rounding
 - Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.
+
+## Minimum/Maximum Zoom Override
+- Override for the minimum and maximum zoom scale limits. 10 is the Foundry default - you can't zoom in to get a bigger than a x10 scale closeup, or zoom out to get a smaller than a x0.1 "wide shot" of the scene. For example, if you change this to 20, you'll be able to zoom in twice as close and zoom out twice as far.
  
 ## "Default" mode
 - Same as the Foundry behavior
