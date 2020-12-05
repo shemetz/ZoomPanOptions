@@ -20,11 +20,12 @@ function _onWheel_Override (event) {
     event.preventDefault()
   }
 
-  // Handle wheel events for the canvas if it is ready and if it is our hover target
-  let hover = document.elementFromPoint(event.clientX, event.clientY)
-  if (!(canvas && canvas.ready && hover && hover.id === 'board')) return null
-
+  // Take no actions if the canvas is not hovered
+  if (!canvas?.ready) return
+  const hover = document.elementFromPoint(event.clientX, event.clientY)
+  if (!hover || (hover.id !== 'board')) return
   event.preventDefault()
+
   const layer = canvas.activeLayer
 
   // Case 1 - rotate stuff
@@ -193,6 +194,17 @@ Hooks.on('init', function () {
     default: 1,
     type: Number,
   })
+  game.settings.register(MODULE_ID, 'min-max-zoom-override', {
+    name: 'Minimum/Maximum Zoom Override',
+    hint: 'Override for the minimum and maximum zoom scale limits. 10 is the Foundry default (x10 and x0.1 scaling).',
+    scope: 'client',
+    config: true,
+    default: 10,
+    type: Number,
+    onChange: value => {
+      CONFIG.Canvas.maxZoom = value
+    },
+  })
 })
 
 Hooks.once('setup', function () {
@@ -202,7 +214,7 @@ Hooks.once('setup', function () {
     (event) => {
       return _onWheel_Override(event)
     },
-    'OVERRIDE'
+    'OVERRIDE',
   )
   libWrapper.register(
     MODULE_ID,
@@ -210,7 +222,7 @@ Hooks.once('setup', function () {
     (obj) => {
       return _constrainView_Override(obj)
     },
-    'OVERRIDE' // only overrides a tiny part of the function... would be nice if foundry made it more modular
+    'OVERRIDE', // only overrides a tiny part of the function... would be nice if foundry made it more modular
   )
   console.log('Done setting up Zoom/Pan Options.')
 })
