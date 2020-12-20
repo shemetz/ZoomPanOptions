@@ -5,7 +5,7 @@
   "author": "shem",
   "version": "1.4.0",
   "minimumCoreVersion": "0.6.0",
-  "compatibleCoreVersion": "0.7.8",
+  "compatibleCoreVersion": "0.7.9",
   "esmodules": [
     "scripts/zoom-pan-options.js"
   ],
@@ -13,5 +13,24 @@
   "manifest": "https://github.com/itamarcu/ZoomPanOptions/raw/master/module.json",
   "download": "https://github.com/itamarcu/ZoomPanOptions/archive/master.zip",
   "readme": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/README.md",
-  "bugs": "https://github.com/itamarcu/ZoomPanOptions/issues"
+  "bugs": "https://github.com/itamarcu/ZoomPanOptions/issues",
+  "authors": [
+    {
+      "name": "shem",
+      "email": "itamarcu+foundry@gmail.com",
+      "discord": "shem#0226",
+      "reddit": "u/Shemetz"
+    }
+  ],
+  "manifestPlusVersion": "1.0.0",
+  "media": [
+    {
+      "type": "icon",
+      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/icon.png"
+    },
+    {
+      "type": "cover",
+      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/cover.png"
+    }
+  ]
 }
