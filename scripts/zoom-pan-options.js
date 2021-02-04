@@ -140,8 +140,9 @@ function zoom (event) {
 
 function panWithMultiplier (event) {
   const multiplier = (1 / canvas.stage.scale.x) * getSetting('pan-speed-multiplier')
+  const invertVerticalScroll = getSetting('invert-vertical-scroll') ? -1 : 1
   const x = canvas.stage.pivot.x + event.deltaX * multiplier
-  const y = canvas.stage.pivot.y + event.deltaY * multiplier
+  const y = canvas.stage.pivot.y + event.deltaY * multiplier * invertVerticalScroll
   canvas.pan({ x, y })
 }
 
@@ -200,6 +201,14 @@ Hooks.on('init', function () {
     config: true,
     default: 1,
     type: Number,
+  })
+  game.settings.register(MODULE_ID, 'invert-vertical-scroll', {
+    name: 'Invert vertical scroll',
+    hint: 'If set to true, you will scroll up when dragging/scrolling down.',
+    scope: 'client',
+    config: true,
+    default: false,
+    type: Boolean,
   })
   game.settings.register(MODULE_ID, 'min-max-zoom-override', {
     name: 'Minimum/Maximum Zoom Override',

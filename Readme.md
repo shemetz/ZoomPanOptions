@@ -45,6 +45,9 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Set to 0.1 for slower zooming, or 10 for faster zooming.
 - Technically you can give this a negative value to flip your zoom directions, if you're an oddball. 
 
+## Invert vertical scroll
+- Only used in touchpad and alternative modes. If set to true, you will scroll up when dragging/scrolling down.
+
 # Credits
 
 Thanks to mrkwnzl#7407 for the touchpad support and testing!
