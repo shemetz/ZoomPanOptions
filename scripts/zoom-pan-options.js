@@ -6,6 +6,17 @@ function getSetting (settingName) {
   return game.settings.get(MODULE_ID, settingName)
 }
 
+function checkRotationRateLimit(layer) {
+  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer._hover
+  if (!hasTarget)
+    return false
+  const t = Date.now()
+  if ((t - game.keyboard._wheelTime) < game.keyboard.constructor.MOUSE_WHEEL_RATE_LIMIT)
+    return false
+  game.keyboard._wheelTime = t
+  return true
+}
+
 /**
  * (note: return value is meaningless here)
  */
@@ -30,22 +41,17 @@ function _onWheel_Override (event) {
 
   // Case 1 - rotate stuff
   if (layer instanceof PlaceablesLayer) {
-    const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer._hover
-    if (!hasTarget) return
-    const t = Date.now()
-    if ((t - game.keyboard._wheelTime) < game.keyboard.constructor.MOUSE_WHEEL_RATE_LIMIT) return
-    game.keyboard._wheelTime = t
     if (mode === 'Default' && (ctrlOrMeta || shift)) {
-      return layer._onMouseWheel(event)
+      return checkRotationRateLimit(layer) && layer._onMouseWheel(event)
     }
     if (mode === 'Touchpad' && shift) {
-      return layer._onMouseWheel({
+      return checkRotationRateLimit(layer) && layer._onMouseWheel({
         deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
         shiftKey: shift && !ctrlOrMeta,
       })
     }
     if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
-      return layer._onMouseWheel({
+      return checkRotationRateLimit(layer) && layer._onMouseWheel({
         deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
         shiftKey: shift,
       })
