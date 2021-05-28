@@ -3,9 +3,9 @@
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
   "author": "shem",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "minimumCoreVersion": "0.6.0",
-  "compatibleCoreVersion": "0.7.9",
+  "compatibleCoreVersion": "0.8.5",
   "esmodules": [
     "scripts/zoom-pan-options.js"
   ],
@@ -22,15 +22,17 @@
       "reddit": "u/Shemetz"
     }
   ],
-  "manifestPlusVersion": "1.0.0",
+  "manifestPlusVersion": "1.2.0",
   "media": [
     {
       "type": "icon",
-      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/icon.png"
+      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/icon.png",
+      "caption": "Zoom/Pan Options"
     },
     {
       "type": "cover",
-      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/cover.png"
+      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/cover.png",
+      "caption": "Zoom/Pan Options"
     }
   ]
 }
