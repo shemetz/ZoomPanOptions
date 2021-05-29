@@ -6,7 +6,7 @@ function getSetting (settingName) {
   return game.settings.get(MODULE_ID, settingName)
 }
 
-function checkRotationRateLimit(layer) {
+function checkRotationRateLimit (layer) {
   const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer._hover
   if (!hasTarget)
     return false
@@ -150,6 +150,50 @@ function panWithMultiplier (event) {
   canvas.pan({ x, y })
 }
 
+function disableMiddleMouseScrollIfMiddleMousePanIsActive (isActive) {
+  if (isActive) {
+    // this will prevent middle-click from showing the scroll icon
+    document.body.onmousedown__disabled = document.body.onmousedown
+    document.body.onmousedown = function (e) { if (e.button === 1) return false }
+  } else {
+    document.body.onmousedown = document.body.onmousedown__disabled
+  }
+}
+
+function _handleMouseDown_Wrapper (wrapped, ...args) {
+  if (!getSetting('middle-mouse-pan')) return wrapped(...args)
+  const event = args[0]
+  if (event.data.originalEvent.button === 0) return wrapped(...args) // left-click
+  if (event.data.originalEvent.button !== 1) return // additional buttons other than middle click - still ignoring!
+
+  // Middle-mouse click will *only* pan;  ignoring anything else on the canvas
+  const mim = canvas.mouseInteractionManager
+  if (![mim.states.HOVER, mim.states.CLICKED, mim.states.DRAG].includes(mim.state)) return wrapped(...args)
+  canvas.currentMouseManager = mim
+
+  // Update event data
+  event.data.object = mim.object
+  event.data.origin = event.data.getLocalPosition(mim.layer)
+
+  // piggy-backing off of the right-mouse-drag code, for lack of a better option
+  const action = 'clickRight'
+  if (!mim.can(action, event)) return
+  event.stopPropagation()
+  mim._dragRight = true
+
+  // Upgrade hover to clicked
+  if (mim.state === mim.states.HOVER) mim.state = mim.states.CLICKED
+  if (CONFIG.debug.mouseInteraction) console.log(`${mim.object.constructor.name} | ${action}`)
+
+  // Trigger callback function
+  mim.callback(action, event)
+
+  // Activate drag handlers
+  if ((mim.state < mim.states.DRAG) && mim.can('dragRight', event)) {
+    mim._activateDragEvents()
+  }
+}
+
 Hooks.on('init', function () {
   console.log('Initializing Zoom/Pan Options')
   game.settings.register(MODULE_ID, 'zoom-around-cursor', {
@@ -159,6 +203,35 @@ Hooks.on('init', function () {
     config: true,
     default: true,
     type: Boolean,
+  })
+  game.settings.register(MODULE_ID, 'middle-mouse-pan', {
+    name: 'Middle-mouse to pan',
+    hint: 'Middle mouse press will pan the canvas, instead of the default of doing nothing.',
+    scope: 'client',
+    config: true,
+    default: false,
+    type: Boolean,
+    onChange: disableMiddleMouseScrollIfMiddleMousePanIsActive,
+  })
+  game.settings.register(MODULE_ID, 'disable-zoom-rounding', {
+    name: 'Disable zoom rounding',
+    hint:
+      'Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.',
+    scope: 'client',
+    config: true,
+    default: true,
+    type: Boolean,
+  })
+  game.settings.register(MODULE_ID, 'min-max-zoom-override', {
+    name: 'Minimum/Maximum Zoom Override',
+    hint: 'Override for the minimum and maximum zoom scale limits. 10 is the Foundry default (x10 and x0.1 scaling).',
+    scope: 'client',
+    config: true,
+    default: 10,
+    type: Number,
+    onChange: value => {
+      CONFIG.Canvas.maxZoom = value
+    },
   })
   game.settings.register(MODULE_ID, 'pan-zoom-mode', {
     name: 'Pan/Zoom Mode',
@@ -178,15 +251,6 @@ Hooks.on('init', function () {
       'Alternative': 'Alternative: can pan with Shift, rotate while holding Alt',
     },
     default: 'Default',
-  })
-  game.settings.register(MODULE_ID, 'disable-zoom-rounding', {
-    name: 'Disable zoom rounding',
-    hint:
-      'Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.',
-    scope: 'client',
-    config: true,
-    default: true,
-    type: Boolean,
   })
   game.settings.register(MODULE_ID, 'zoom-speed-multiplier', {
     name: 'Zoom speed',
@@ -214,17 +278,6 @@ Hooks.on('init', function () {
     default: false,
     type: Boolean,
   })
-  game.settings.register(MODULE_ID, 'min-max-zoom-override', {
-    name: 'Minimum/Maximum Zoom Override',
-    hint: 'Override for the minimum and maximum zoom scale limits. 10 is the Foundry default (x10 and x0.1 scaling).',
-    scope: 'client',
-    config: true,
-    default: 10,
-    type: Number,
-    onChange: value => {
-      CONFIG.Canvas.maxZoom = value
-    },
-  })
 })
 
 Hooks.once('setup', function () {
@@ -244,5 +297,14 @@ Hooks.once('setup', function () {
     },
     'OVERRIDE', // only overrides a tiny part of the function... would be nice if foundry made it more modular
   )
+  libWrapper.register(
+    MODULE_ID,
+    'MouseInteractionManager.prototype._handleMouseDown',
+    function (wrapped, ...args) {
+      return _handleMouseDown_Wrapper.bind(this)(wrapped, ...args)
+    },
+    'MIXED', // only overrides if it's a middle click
+  )
+  disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   console.log('Done setting up Zoom/Pan Options.')
 })

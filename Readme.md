@@ -14,22 +14,27 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - When zooming in and out, the camera will stay focused on the cursor, like in many other applications.
 - This does not affect PageUp, PageDown, or Numpad +/-. Those will still zoom focused on the center of the screen.
 
+## Middle-mouse to pan
+- Holding the middle mouse button and dragging around will pan around the map, just like the right mouse button, instead of showing the "auto scroll" icon (which is useless in Foundry).
+- This will mimic the default right-mouse panning, though it will ignore tokens, tiles, etc (instead of selecting them).
+
 ## Disable zoom rounding
 - Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.
 
 ## Minimum/Maximum Zoom Override
 - Override for the minimum and maximum zoom scale limits. 10 is the Foundry default - you can't zoom in to get a bigger than a x10 scale closeup, or zoom out to get a smaller than a x0.1 "wide shot" of the scene. For example, if you change this to 20, you'll be able to zoom in twice as close and zoom out twice as far.
  
-## "Default" mode
+## Pan/Zoom Mode:
+### "Default" mode
 - Same as the Foundry behavior
 
-## "Touchpad" mode
+### "Touchpad" mode
 - Pan with two-finger drag on the touchpad.
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Shift+scroll and Ctrl+Shift+scroll.
 - (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
-## "Alternative" mode
+### "Alternative" mode
 - Pan with touchpad, or with mouse: vertical mouse scroll will pan up and down, and horizontal mouse scroll will pan left and right.
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
