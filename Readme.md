@@ -4,7 +4,7 @@
 ![GitHub Releases](https://img.shields.io/github/downloads/itamarcu/ZoomPanOptions/latest/total?style=for-the-badge) 
 ![GitHub All Releases](https://img.shields.io/github/downloads/itamarcu/ZoomPanOptions/total?style=for-the-badge&label=Downloads+total)  
 
-FoundryVTT module to change mouse scroll behavior. It has several settings, which can be toggled individually, and stored locally (per client).
+FoundryVTT module to change zooming and panning through the mouse or a touchpad. It has several settings, which can be toggled individually, and stored locally (per client).
 
 To install, browse for it in the module browser, or [directly copy the manifest link for the latest release](https://github.com/itamarcu/ZoomPanOptions/releases/latest/download/module.json).
 
