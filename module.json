@@ -12,7 +12,9 @@
   "url": "https://github.com/itamarcu/ZoomPanOptions",
   "manifest": "https://github.com/itamarcu/ZoomPanOptions/raw/master/module.json",
   "download": "https://github.com/itamarcu/ZoomPanOptions/archive/master.zip",
-  "readme": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/README.md",
+  "readme": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/Readme.md",
+  "changelog": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/Changelog.md",
+  "license": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/License.txt",
   "bugs": "https://github.com/itamarcu/ZoomPanOptions/issues",
   "authors": [
     {
