@@ -21,10 +21,26 @@ function checkRotationRateLimit (layer) {
  * (note: return value is meaningless here)
  */
 function _onWheel_Override (event) {
-  const mode = getSetting('pan-zoom-mode')
+  let mode = getSetting('pan-zoom-mode')
   const shift = event.shiftKey
   const alt = event.altKey
   const ctrlOrMeta = event.ctrlKey || event.metaKey  // meta key (cmd on mac, winkey in windows) will behave like ctrl
+
+  // Switch to touchpad if touchpad is detected
+  if (mode === 'Default') {
+    if (event.deltaX !== 0 && event.deltaY !== 0) {
+      // When moving on both X & Y axis, it can't be a mouse scroll
+      mode = 'Touchpad'
+    } else {
+      const deltaX = String(event.deltaX).split('.');
+      const deltaY = String(event.deltaY).split('.');
+      // If there is a decimal point whith 2 or more numbers after the point 
+      // That means there is precise movement => touchpad
+      if ((deltaX.length > 1 && deltaX[1].length > 1) || deltaY.length > 1 && deltaY[1].length > 1) {
+        mode = 'Touchpad'
+      }
+    }
+  }
 
   // Prevent zooming the entire browser window
   if (ctrlOrMeta) {
