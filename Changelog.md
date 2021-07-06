@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2021-07-06
+- Added automatic detection of touchpad movements in "Default" mode
+
 ## [1.6.1] - 2021-05-29
 - Added middle mouse pan setting
 - Added changelog and license to repository

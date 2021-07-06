@@ -27,6 +27,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 ## Pan/Zoom Mode:
 ### "Default" mode
 - Same as the Foundry behavior
+- Will auto-detect touchpad movements (any "scroll" event that includes both vertical and horizontal components), and treat them as if the "Touchpad" mode was active
 
 ### "Touchpad" mode
 - Pan with two-finger drag on the touchpad.
