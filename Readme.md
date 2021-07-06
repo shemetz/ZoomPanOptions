@@ -29,6 +29,9 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Same as the Foundry behavior
 - Will auto-detect touchpad movements (any "scroll" event that includes both vertical and horizontal components), and treat them as if the "Touchpad" mode was active
 
+### "Default Mouse" mode
+- Same as Default mode, but will avoid auto-detecting touchpad.  Pick this if the auto-detection doesn't work for you (and consider opening a bug ticket about it!).
+
 ### "Touchpad" mode
 - Pan with two-finger drag on the touchpad.
 - Zoom with two-finger pinch or Ctrl+scroll.
@@ -47,7 +50,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 ## Zoom speed multiplier
 - Useful if your zoom is too sensitive, or not sensitive enough.
 - Set to 0 for default Foundry behavior (5% zoom per mouse tick, always).
-- Set to 1 for zooming based on scroll delta, which should be similar to default zoom for most common mouse types.
+- Set to 1 for zooming based on scroll delta, which should be similar to default zoom for most common mouse types, but will feel smoother for some touchpads.
 - Set to 0.1 for slower zooming, or 10 for faster zooming.
 - Technically you can give this a negative value to flip your zoom directions, if you're an oddball. 
 
@@ -59,6 +62,8 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 Thanks to mrkwnzl#7407 for the touchpad support and testing!
 
 Thanks to akrigline/Calego for merging with CanvasScroll and helping with libwrapper and workflows! 
+
+Thanks to TPNils for the touchpad auto-detection help!
 
 # [Cursor Zoom](https://github.com/itamarcu/CursorZoom)
 My old foundry module, that only had the "Zoom around cursor" feature, and did not allow configuring it in the settings for each player.
