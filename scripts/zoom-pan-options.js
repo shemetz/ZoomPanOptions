@@ -17,6 +17,26 @@ function checkRotationRateLimit (layer) {
   return true
 }
 
+function isTouchpad (event) {
+  if (event.wheelDeltaY ? event.wheelDeltaY === -3 * event.deltaY : event.deltaMode === 0) {
+    // https://stackoverflow.com/a/62415754/1703463
+    return true
+  }
+  if (event.deltaX !== 0 && event.deltaY !== 0) {
+    // When moving on both X & Y axis, it can't be a mouse scroll
+    return true
+  }
+  const deltaX = String(event.deltaX).split('.')
+  const deltaY = String(event.deltaY).split('.')
+  // If there is a decimal point with 2 or more numbers after the point
+  // That means there is precise movement => touchpad
+  if ((deltaX.length > 1 && deltaX[1].length > 1) || deltaY.length > 1 && deltaY[1].length > 1) {
+    return true
+  }
+  // Probably a mouse.
+  return false
+}
+
 /**
  * (note: return value is meaningless here)
  */
@@ -28,18 +48,7 @@ function _onWheel_Override (event) {
 
   // Switch to touchpad if touchpad is detected
   if (mode === 'Default') {
-    if (event.deltaX !== 0 && event.deltaY !== 0) {
-      // When moving on both X & Y axis, it can't be a mouse scroll
-      mode = 'Touchpad'
-    } else {
-      const deltaX = String(event.deltaX).split('.');
-      const deltaY = String(event.deltaY).split('.');
-      // If there is a decimal point whith 2 or more numbers after the point 
-      // That means there is precise movement => touchpad
-      if ((deltaX.length > 1 && deltaX[1].length > 1) || deltaY.length > 1 && deltaY[1].length > 1) {
-        mode = 'Touchpad'
-      }
-    }
+    mode = isTouchpad(event) ? 'Touchpad' : 'DefaultMouse'
   }
 
   // Prevent zooming the entire browser window
@@ -57,7 +66,7 @@ function _onWheel_Override (event) {
 
   // Case 1 - rotate stuff
   if (layer instanceof PlaceablesLayer) {
-    if (mode === 'Default' && (ctrlOrMeta || shift)) {
+    if (mode === 'DefaultMouse' && (ctrlOrMeta || shift)) {
       return checkRotationRateLimit(layer) && layer._onMouseWheel(event)
     }
     if (mode === 'Touchpad' && shift) {
@@ -77,7 +86,7 @@ function _onWheel_Override (event) {
   // Case 2 - zoom the canvas
   // (written to be readable)
   if (
-    mode === 'Default'
+    mode === 'DefaultMouse'
     || (mode === 'Touchpad' && ctrlOrMeta)
     || (mode === 'Alternative' && ctrlOrMeta)
   ) {
@@ -252,7 +261,9 @@ Hooks.on('init', function () {
   game.settings.register(MODULE_ID, 'pan-zoom-mode', {
     name: 'Pan/Zoom Mode',
     hint: `
-      Default: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.
+      Default: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll. Will try to automatically detect touchpad scrolls.
+||
+      Default Mouse: Like Default, but will not try to automatically detect touchpads.
 ||
       Touchpad: Pan with two-finger drag. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Shift+scroll and Ctrl+Shift+scroll.
 ||
@@ -262,7 +273,8 @@ Hooks.on('init', function () {
     config: true,
     type: String,
     choices: {
-      'Default': 'Default: standard foundry behavior',
+      'Default': 'Default: standard foundry behavior with auto-detection for touchpads',
+      'DefaultMouse': 'Default Mouse: like Default but without automatic touchpad detection',
       'Touchpad': 'Touchpad: drag, pinch, rotate with Shift or Ctrl+Shift',
       'Alternative': 'Alternative: can pan with Shift, rotate while holding Alt',
     },
@@ -271,7 +283,7 @@ Hooks.on('init', function () {
   game.settings.register(MODULE_ID, 'zoom-speed-multiplier', {
     name: 'Zoom speed',
     hint:
-      'Multiplies zoom speed, affecting scaling speed. 0.1 or 10 might be better for some touchpads. 0 for default Foundry behavior.',
+      'Multiplies zoom speed, affecting scaling speed. 0.1 or 10 might be better for some touchpads. 0 for default Foundry behavior (which ignores scroll "intensity", and feels worse for touchpads).',
     scope: 'client',
     config: true,
     default: 0,
