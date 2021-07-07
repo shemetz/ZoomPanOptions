@@ -249,10 +249,10 @@ Hooks.on('init', function () {
   })
   game.settings.register(MODULE_ID, 'min-max-zoom-override', {
     name: 'Minimum/Maximum Zoom Override',
-    hint: 'Override for the minimum and maximum zoom scale limits. 10 is the Foundry default (x10 and x0.1 scaling).',
+    hint: 'Override for the minimum and maximum zoom scale limits. 3 is the Foundry default (x3 and x0.333 scaling).',
     scope: 'client',
     config: true,
-    default: 10,
+    default: CONFIG.Canvas.maxZoom, // 3.0
     type: Number,
     onChange: value => {
       CONFIG.Canvas.maxZoom = value
