@@ -69,15 +69,18 @@ function _onWheel_Override (event) {
     if (mode === 'DefaultMouse' && (ctrlOrMeta || shift)) {
       return checkRotationRateLimit(layer) && layer._onMouseWheel(event)
     }
+    const deltaY = event.wheelDelta !== undefined ? event.wheelDelta
+      // wheelDelta is undefined in firefox
+      : event.deltaY
     if (mode === 'Touchpad' && shift) {
       return checkRotationRateLimit(layer) && layer._onMouseWheel({
-        deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
+        deltaY: deltaY,
         shiftKey: shift && !ctrlOrMeta,
       })
     }
     if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
       return checkRotationRateLimit(layer) && layer._onMouseWheel({
-        deltaY: event.wheelDelta, // only the sign matters, and we'll use wheelDelta instead of relying on deltaY
+        deltaY: deltaY,
         shiftKey: shift,
       })
     }
