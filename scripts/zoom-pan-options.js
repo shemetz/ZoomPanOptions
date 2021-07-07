@@ -334,5 +334,6 @@ Hooks.once('setup', function () {
     'MIXED', // only overrides if it's a middle click
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
+  CONFIG.Canvas.maxZoom = getSetting('min-max-zoom-override')
   console.log('Done setting up Zoom/Pan Options.')
 })
