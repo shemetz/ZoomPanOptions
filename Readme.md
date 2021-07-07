@@ -36,6 +36,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Pan with two-finger drag on the touchpad.
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Shift+scroll and Ctrl+Shift+scroll.
+  (Note: if you're using a touchpad and you want to rotate a token, I recommend the [Alternative Rotation](https://github.com/itamarcu/AlternativeRotation) module - shift-dragging a token is easier than trying to accurately scroll the right amount/speed)
 - (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
 ### "Alternative" mode
