@@ -228,9 +228,13 @@ Hooks.on('init', function () {
 })
 
 Hooks.once('setup', function () {
+  const wheelPrototype = isNewerVersion(game.version, '9.231') ? 
+                         'MouseManager.prototype._onWheel' : 
+                         'KeyboardManager.prototype._onWheel';
+
   libWrapper.register(
     MODULE_ID,
-    'KeyboardManager.prototype._onWheel',
+    wheelPrototype,
     (event) => {
       return _onWheel_Override(event)
     },
