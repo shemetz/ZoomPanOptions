@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.6] - 2021-12-03
+- Fixed compatibility with Foundry v9.232 (#35) (thank you @caewok for the contribution!)
+
 ## [1.6.5] - 2021-07-06
 - Fixed minimum/maximum zoom not carrying over after refreshing ([#28](https://github.com/itamarcu/ZoomPanOptions/issues/28))
 - Updated default min/max zoom scale to be just like the Foundry default - i.e. `3.0`.
@@ -41,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## See also: [Unreleased]
 
-[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.5...HEAD
+[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.6...HEAD
 [1.3.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.0.0...1.3.0
 [1.3.7]: https://github.com/itamarcu/ZoomPanOptions/compare/1.3.0...1.3.7
 [1.4.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.3.7...1.4.0
@@ -49,3 +52,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.6.1]: https://github.com/itamarcu/ZoomPanOptions/compare/1.5.3...1.6.1
 [1.6.3]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.1...1.6.3
 [1.6.5]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.3...1.6.5
+[1.6.6]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.6...1.6.6
