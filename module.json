@@ -23,6 +23,11 @@
       "reddit": "u/Shemetz"
     }
   ],
+  "dependencies": [
+    {
+      "name": "lib-wrapper"
+    }
+  ],
   "manifestPlusVersion": "1.2.0",
   "media": [
     {
