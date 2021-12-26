@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.9] - 2021-12-26
+- Explicitly marked libWrapper as a dependency, and updated libWrapper shim code
+
 ## [1.6.8] - 2021-12-24
 - Fixed compatibility with Foundry v9.232 (#35, #37) (thank you @caewok for the contribution!)
 - Marked as compatible with Foundry v9 stable
@@ -45,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## See also: [Unreleased]
 
-[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.8...HEAD
+[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.9...HEAD
 [1.3.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.0.0...1.3.0
 [1.3.7]: https://github.com/itamarcu/ZoomPanOptions/compare/1.3.0...1.3.7
 [1.4.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.3.7...1.4.0
@@ -54,3 +57,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.6.3]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.1...1.6.3
 [1.6.5]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.3...1.6.5
 [1.6.8]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.5...1.6.8
+[1.6.9]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.8...1.6.9
