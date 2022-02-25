@@ -241,6 +241,48 @@ function _handleMouseDown_Wrapper (wrapped, ...args) {
   }
 }
 
+/**
+ * Changes from original function:
+ * `pad` value and `shift` divisor are both customizable instead of being the default of 25 and 2.
+ */
+function _onDragCanvasPan_override (event) {
+  // Throttle panning by 200ms
+  const now = Date.now()
+  if (now - (this._panTime || 0) <= 200) return
+  this._panTime = now
+
+  // Shift by a few grid spaces at a time
+  const { x, y } = event
+  const pad = getSetting('pad-value-when-dragging')
+  const shift = (this.dimensions.size * getSetting('shift-value-when-dragging')) / this.stage.scale.x
+
+  // Shift horizontally
+  let dx = 0
+  if (x < pad) dx = -shift
+  else if (x > window.innerWidth - pad) dx = shift
+
+  // Shift vertically
+  let dy = 0
+  if (y < pad) dy = -shift
+  else if (y > window.innerHeight - pad) dy = shift
+
+  // Enact panning
+  if (dx || dy) return this.animatePan({ x: this.stage.pivot.x + dx, y: this.stage.pivot.y + dy, duration: 200 })
+}
+
+const migrateOldSettings = () => {
+  const mode = getSetting('pan-zoom-mode')
+  if (mode === 'DefaultMouse') {
+    console.log(`Zoom/Pan Options | Migrating old setting 'pan-zoom-mode': 'DefaultMouse' to 'Mouse'`)
+    game.settings.set('zoom-pan-options', 'pan-zoom-mode', 'Mouse')
+  }
+  if (mode === 'Default') {
+    console.log(`Zoom/Pan Options | Migrating old setting 'pan-zoom-mode': 'Default' to 'Mouse', plus 'auto-detect-touchpad': true`)
+    game.settings.set('zoom-pan-options', 'pan-zoom-mode', 'Mouse')
+    game.settings.set('zoom-pan-options', 'auto-detect-touchpad', true)
+  }
+}
+
 Hooks.on('init', function () {
   console.log('Initializing Zoom/Pan Options')
   game.settings.register(MODULE_ID, 'zoom-around-cursor', {
@@ -333,6 +375,25 @@ Hooks.on('init', function () {
     default: false,
     type: Boolean,
   })
+  game.settings.register(MODULE_ID, 'pad-value-when-dragging', {
+    name: '"pad" value when dragging something to the edge of the screen',
+    hint:
+      'When holding down the cursor and moving it towards the edge of the screen, the canvas will pan.  "pad" is the distance that will trigger it. Foundry default is 50px.',
+    scope: 'client',
+    config: true,
+    default: 50,
+    type: Number,
+  })
+  game.settings.register(MODULE_ID, 'shift-value-when-dragging', {
+    name: '"shift" value when dragging something to the edge of the screen',
+    hint:
+      'When holding down the cursor and moving it towards the edge of the screen, the canvas will pan.  "shift" is the panning distance in tiles. Foundry default is 3 tiles.',
+    scope: 'client',
+    config: true,
+    default: 3,
+    type: Number,
+  })
+  migrateOldSettings()
 })
 
 Hooks.once('setup', function () {
@@ -355,6 +416,12 @@ Hooks.once('setup', function () {
       return _constrainView_Override(obj)
     },
     'OVERRIDE', // only overrides a tiny part of the function... would be nice if foundry made it more modular
+  )
+  libWrapper.register(
+    MODULE_ID,
+    'Canvas.prototype._onDragCanvasPan',
+    _onDragCanvasPan_override,
+    'OVERRIDE', // (same as above)
   )
   libWrapper.register(
     MODULE_ID,
