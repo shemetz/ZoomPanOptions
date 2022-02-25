@@ -2,6 +2,9 @@ import { libWrapper } from './libwrapper-shim.js'
 
 const MODULE_ID = 'zoom-pan-options'
 
+// note: 'Default' is the old name for 'AutoDetect'
+// 'DefaultMouse' is the old name for 'Mouse'
+
 function getSetting (settingName) {
   return game.settings.get(MODULE_ID, settingName)
 }
@@ -11,14 +14,19 @@ function checkRotationRateLimit (layer) {
   if (!hasTarget)
     return false
   const t = Date.now()
-  const rate_limit = isNewerVersion(game.version, '9.231') ? game.mouse.MOUSE_WHEEL_RATE_LIMIT : game.keyboard.constructor.MOUSE_WHEEL_RATE_LIMIT;
-  
+  const rate_limit = isNewerVersion(game.version, '9.231')
+    ? game.mouse.MOUSE_WHEEL_RATE_LIMIT
+    : game.keyboard.constructor.MOUSE_WHEEL_RATE_LIMIT
+
   if ((t - game.keyboard._wheelTime) < rate_limit)
     return false
   game.keyboard._wheelTime = t
   return true
 }
 
+/**
+ * note:  this is not perfect which is why it's opt-in.  see issue: https://github.com/itamarcu/ZoomPanOptions/issues/30
+ */
 function isTouchpad (event) {
   if (event.wheelDeltaY ? event.wheelDeltaY === -3 * event.deltaY : event.deltaMode === 0) {
     // https://stackoverflow.com/a/62415754/1703463
@@ -43,14 +51,23 @@ function isTouchpad (event) {
  * (note: return value is meaningless here)
  */
 function _onWheel_Override (event) {
-  let mode = getSetting('pan-zoom-mode')
+  let mode
   const shift = event.shiftKey
   const alt = event.altKey
   const ctrlOrMeta = event.ctrlKey || event.metaKey  // meta key (cmd on mac, winkey in windows) will behave like ctrl
 
-  // Switch to touchpad if touchpad is detected
-  if (mode === 'Default') {
-    mode = isTouchpad(event) ? 'Touchpad' : 'DefaultMouse'
+  // Select scrolling mode
+  if (getSetting('auto-detect-touchpad')) {
+    const touchpad = isTouchpad(event)
+    if (!touchpad) {
+      mode = 'Mouse'
+    } else if (getSetting('pan-zoom-mode') === 'Alternative') {
+      mode = 'Alternative'
+    } else {
+      mode = 'Touchpad'
+    }
+  } else {
+    mode = getSetting('pan-zoom-mode')
   }
 
   // Prevent zooming the entire browser window
@@ -68,7 +85,7 @@ function _onWheel_Override (event) {
 
   // Case 1 - rotate stuff
   if (layer instanceof PlaceablesLayer) {
-    if (mode === 'DefaultMouse' && (ctrlOrMeta || shift)) {
+    if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
       return checkRotationRateLimit(layer) && layer._onMouseWheel(event)
     }
     const deltaY = event.wheelDelta !== undefined ? event.wheelDelta
@@ -91,7 +108,7 @@ function _onWheel_Override (event) {
   // Case 2 - zoom the canvas
   // (written to be readable)
   if (
-    mode === 'DefaultMouse'
+    mode === 'Mouse'
     || (mode === 'Touchpad' && ctrlOrMeta)
     || (mode === 'Alternative' && ctrlOrMeta)
   ) {
@@ -253,7 +270,7 @@ Hooks.on('init', function () {
     type: Boolean,
   })
   game.settings.register(MODULE_ID, 'min-max-zoom-override', {
-    name: 'Minimum/Maximum Zoom Override',
+    name: 'Minimum/maximum zoom override',
     hint: 'Override for the minimum and maximum zoom scale limits. 3 is the Foundry default (x3 and x0.333 scaling).',
     scope: 'client',
     config: true,
@@ -264,11 +281,9 @@ Hooks.on('init', function () {
     },
   })
   game.settings.register(MODULE_ID, 'pan-zoom-mode', {
-    name: 'Pan/Zoom Mode',
+    name: 'Pan/zoom mode',
     hint: `
-      Default: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll. Will try to automatically detect touchpad scrolls.
-||
-      Default Mouse: Like Default, but will not try to automatically detect touchpads.
+      Mouse: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.
 ||
       Touchpad: Pan with two-finger drag. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Shift+scroll and Ctrl+Shift+scroll.
 ||
@@ -278,12 +293,19 @@ Hooks.on('init', function () {
     config: true,
     type: String,
     choices: {
-      'Default': 'Default: standard foundry behavior with auto-detection for touchpads',
-      'DefaultMouse': 'Default Mouse: like Default but without automatic touchpad detection',
+      'Mouse': 'Mouse: standard foundry behavior',
       'Touchpad': 'Touchpad: drag, pinch, rotate with Shift or Ctrl+Shift',
       'Alternative': 'Alternative: can pan with Shift, rotate while holding Alt',
     },
-    default: 'Default',
+    default: 'Mouse',
+  })
+  game.settings.register(MODULE_ID, 'auto-detect-touchpad', {
+    name: 'Auto-detect touchpad',
+    hint: 'Will try to auto-detect touchpads;  going with either Mouse or Touchpad depending on result (or Alternative if it was selected).',
+    scope: 'client',
+    config: true,
+    default: false,
+    type: Boolean,
   })
   game.settings.register(MODULE_ID, 'zoom-speed-multiplier', {
     name: 'Zoom speed',
@@ -314,9 +336,9 @@ Hooks.on('init', function () {
 })
 
 Hooks.once('setup', function () {
-  const wheelPrototype = isNewerVersion(game.version, '9.231') ? 
-                         'MouseManager.prototype._onWheel' : 
-                         'KeyboardManager.prototype._onWheel';
+  const wheelPrototype = isNewerVersion(game.version, '9.231')
+    ? 'MouseManager.prototype._onWheel'
+    : 'KeyboardManager.prototype._onWheel'
 
   libWrapper.register(
     MODULE_ID,
