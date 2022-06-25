@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2022-06-25
+- FoundryVTT V10 compatibility
+- "Disable Zoom Rounding" had to be changed;  please inform me if it's worse now.
+
 ## [1.7.0] - 2022-02-25
 - Split "auto-detect touchpad" setting out of pan/zoom mode, and made it false by default
 - Added settings to change pad and shift values when dragging at the edge of the screen (#33)
@@ -66,4 +70,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.6.9]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.8...1.6.9
 [1.6.10]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.9...1.6.10
 [1.7.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.10...1.7.0
-[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.0...HEAD
+[1.7.1]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.1...1.7.1
+[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.1...HEAD

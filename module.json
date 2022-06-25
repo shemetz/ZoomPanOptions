@@ -2,9 +2,9 @@
   "name": "zoom-pan-options",
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "minimumCoreVersion": "0.6.0",
-  "compatibleCoreVersion": "9",
+  "compatibleCoreVersion": "10",
   "esmodules": [
     "scripts/zoom-pan-options.js"
   ],
