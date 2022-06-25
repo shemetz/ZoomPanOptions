@@ -15,17 +15,30 @@
   "changelog": "https://github.com/itamarcu/ZoomPanOptions/blob/master/Changelog.md",
   "license": "https://github.com/itamarcu/ZoomPanOptions/blob/master/License.txt",
   "bugs": "https://github.com/itamarcu/ZoomPanOptions/issues",
-  "authors": [
-    {
-      "name": "shem",
-      "email": "itamarcu+foundry@gmail.com",
-      "discord": "shem#0226",
-      "reddit": "u/Shemetz"
-    }
-  ],
   "dependencies": [
     {
       "name": "lib-wrapper"
+    }
+  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
+        "compatibility": {
+          "minimum": "1.12.7.0",
+          "compatible": "1.12.7.0"
+        }
+      }
+    ]
+  },
+  "authors": [
+    {
+      "name": "shem",
+      "discord": "shem#0226",
+      "email": "itamarcu+foundry@gmail.com",
+      "reddit": "u/Shemetz"
     }
   ],
   "manifestPlusVersion": "1.2.0",

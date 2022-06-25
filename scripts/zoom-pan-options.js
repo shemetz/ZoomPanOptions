@@ -127,6 +127,9 @@ function _onWheel_Override (event) {
   panWithMultiplier(event)
 }
 
+/**
+ * note - this is useless once we get to V10
+ */
 function _constrainView_Override ({ x, y, scale } = {}) {
   const d = canvas.dimensions
 
@@ -409,14 +412,31 @@ Hooks.once('setup', function () {
     },
     'OVERRIDE',
   )
-  libWrapper.register(
-    MODULE_ID,
-    'Canvas.prototype._constrainView',
-    (obj) => {
-      return _constrainView_Override(obj)
-    },
-    'OVERRIDE', // only overrides a tiny part of the function... would be nice if foundry made it more modular
-  )
+  if (isNewerVersion(game.version, '10.269')) {
+    // temporary solution, due to constrainView becoming private in V10.
+    // see https://github.com/foundryvtt/foundryvtt/issues/7382
+    // or see https://github.com/foundryvtt/foundryvtt/issues/7189
+    Hooks.on('canvasPan', (board, constrained) => {
+      if (!getSetting('disable-zoom-rounding')) return
+
+      const d = canvas.dimensions
+      const max = CONFIG.Canvas.maxZoom
+      const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max)
+      constrained.scale = Math.clamped(constrained.scale, 1 / ratio, max)
+
+      board.stage.scale.set(constrained.scale, constrained.scale)
+      board.updateBlur(constrained.scale)
+    })
+  } else {
+    libWrapper.register(
+      MODULE_ID,
+      'Canvas.prototype._constrainView',
+      (obj) => {
+        return _constrainView_Override(obj)
+      },
+      'OVERRIDE', // only overrides a tiny part of the function... would be nice if foundry made it more modular
+    )
+  }
   libWrapper.register(
     MODULE_ID,
     'Canvas.prototype._onDragCanvasPan',
