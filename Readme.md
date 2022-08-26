@@ -19,19 +19,21 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Holding the middle mouse button and dragging around will pan around the map, just like the right mouse button, instead of showing the "auto scroll" icon (which is useless in Foundry).
 - This will mimic the default right-mouse panning, though it will ignore tokens, tiles, etc (instead of selecting them).
 
-## Disable zoom rounding (deprecated; this is the default behavior starting with Foundry V10)
-- Disables older Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.
-
 ## Minimum/Maximum Zoom Override
 - Override for the minimum and maximum zoom scale limits. 3 is the Foundry default - you can't zoom in to get a bigger than a x3 scale closeup, or zoom out to get a smaller than a x0.3 "wide shot" of the scene. For example, if you change this to 6, you'll be able to zoom in twice as close and zoom out twice as far.  A value of 10 is usually enough to fill the screen with a single token or with the entire scene
- 
-## Pan/Zoom Mode:
-### "Default" mode
-- Same as the Foundry behavior
-- Will auto-detect touchpad movements (any "scroll" event that includes both vertical and horizontal components), and treat them as if the "Touchpad" mode was active
 
-### "Default Mouse" mode
-- Same as Default mode, but will avoid auto-detecting touchpad.  Pick this if the auto-detection doesn't work for you (and consider opening a bug ticket about it!).
+## Drag resistance mode
+- By default, Foundry has a "drag resistance" of 0.25 grid units (so usually ~25).
+  This is the minimum distance you need to move your cursor for a mouse drag event to be triggered.
+  When it's too high you'll feel a dead zone when making small mouse drags (e.g. short pans, small drawings).
+  Recommended setting: "Scaling", which scales to be about the visual size of a tool button
+- 'Default': 'Foundry Default: ~25 constantly, which can feel bad, particularly when zoomed in',
+  'Responsive': 'Responsive: 0.1 constantly, very responsive to pan/draw motions but makes it hard to ping (long press)',
+  'Scaling': 'Scaling: scales to always be about 1% of screen width',
+
+## Pan/Zoom Mode:
+### "Mouse" mode
+- Same as the Foundry behavior
 
 ### "Touchpad" mode
 - Pan with two-finger drag on the touchpad.
@@ -45,6 +47,9 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
 - (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
+
+## Auto-detect touchpad
+- Will auto-detect touchpad movements (any "scroll" event that includes both vertical and horizontal components), and treat them as if the "Touchpad" or "Alternative" mode is active.
 
 ## Pan speed multiplier
 - Only used in touchpad and alternative modes. Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.

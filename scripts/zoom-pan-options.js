@@ -215,7 +215,7 @@ function _handleMouseDown_Wrapper (wrapped, ...args) {
 
 /**
  * Changes from original function:
- * `pad` value and `shift` divisor are both customizable instead of being the default of 25 and 2.
+ * `pad` value and `shift` multiplier are both customizable instead of being the default of 50 and 3.
  */
 function _onDragCanvasPan_override (event) {
   // Throttle panning by 200ms
@@ -240,6 +240,19 @@ function _onDragCanvasPan_override (event) {
 
   // Enact panning
   if (dx || dy) return this.animatePan({ x: this.stage.pivot.x + dx, y: this.stage.pivot.y + dy, duration: 200 })
+}
+
+const updateDragResistance = () => {
+  const setting = getSetting('drag-resistance-mode')
+  if (setting === 'Foundry Default') {
+    canvas.mouseInteractionManager.options.dragResistance = undefined
+  } else if (setting === 'Responsive') {
+    canvas.mouseInteractionManager.options.dragResistance = 0.1
+  } else if (setting === 'Scaling') {
+    const scale = canvas.stage.scale.x
+    const multiplier = 20 // feels like about 1% of width
+    canvas.mouseInteractionManager.options.dragResistance = multiplier / scale
+  }
 }
 
 const migrateOldSettings = () => {
@@ -284,6 +297,23 @@ Hooks.on('init', function () {
     onChange: value => {
       CONFIG.Canvas.maxZoom = value
     },
+  })
+  game.settings.register(MODULE_ID, 'drag-resistance-mode', {
+    name: 'Drag resistance mode',
+    hint: 'By default, Foundry has a "drag resistance" of 0.25 grid units (so usually ~25).' +
+      ' This is the minimum distance you need to move your cursor for a mouse drag event to be triggered.' +
+      " When it's too high you'll feel a dead zone when making small mouse drags (e.g. short pans, small drawings)." +
+      ' Recommended setting: "Scaling", which scales to be a bit less than the visual size of a tool button',
+    scope: 'client',
+    config: true,
+    type: String,
+    choices: {
+      'Foundry Default': 'Foundry Default: ~25 constantly, can feel bad, particularly when zoomed in',
+      'Responsive': 'Responsive: 0.1 constantly, makes it hard to ping (long press)',
+      'Scaling': 'Scaling: scales to always be about 1% of screen width',
+    },
+    default: 'Scaling',
+    onChange: updateDragResistance,
   })
   game.settings.register(MODULE_ID, 'pan-zoom-mode', {
     name: 'Pan/zoom mode',
@@ -389,4 +419,9 @@ Hooks.once('setup', function () {
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   CONFIG.Canvas.maxZoom = getSetting('min-max-zoom-override')
   console.log('Done setting up Zoom/Pan Options.')
+})
+
+Hooks.once('ready', () => {
+  Hooks.on('canvasPan', updateDragResistance)
+  updateDragResistance()
 })
