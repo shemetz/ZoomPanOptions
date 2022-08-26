@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2022-08-26
+- Added "Drag resistance mode" feature with new default value ("Scaling")
+- Removed "Disable Zoom Rounding" option, as it's no longer needed with Foundry v10
+
 ## [1.7.2] - 2022-07-02
 - FoundryVTT V10 compatibility
 - "Disable Zoom Rounding" had to be changed;  please inform me if it's worse now.
@@ -70,5 +74,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.6.9]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.8...1.6.9
 [1.6.10]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.9...1.6.10
 [1.7.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.10...1.7.0
-[1.7.2]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.2...1.7.2
-[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.2...HEAD
+[1.7.2]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.2...1.7.4
+[1.7.4]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.4...1.8.0
+[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.8.0...HEAD
