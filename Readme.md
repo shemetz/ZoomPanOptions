@@ -19,8 +19,8 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Holding the middle mouse button and dragging around will pan around the map, just like the right mouse button, instead of showing the "auto scroll" icon (which is useless in Foundry).
 - This will mimic the default right-mouse panning, though it will ignore tokens, tiles, etc (instead of selecting them).
 
-## Disable zoom rounding
-- Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.
+## Disable zoom rounding (deprecated; this is the default behavior starting with Foundry V10)
+- Disables older Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.
 
 ## Minimum/Maximum Zoom Override
 - Override for the minimum and maximum zoom scale limits. 3 is the Foundry default - you can't zoom in to get a bigger than a x3 scale closeup, or zoom out to get a smaller than a x0.3 "wide shot" of the scene. For example, if you change this to 6, you'll be able to zoom in twice as close and zoom out twice as far.  A value of 10 is usually enough to fill the screen with a single token or with the entire scene

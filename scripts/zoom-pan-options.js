@@ -128,37 +128,6 @@ function _onWheel_Override (event) {
 }
 
 /**
- * note - this is useless once we get to V10
- */
-function _constrainView_Override ({ x, y, scale } = {}) {
-  const d = canvas.dimensions
-
-  // Constrain the maximum zoom level
-  if (Number.isNumeric(scale) && scale !== canvas.stage.scale.x) {
-    const max = CONFIG.Canvas.maxZoom
-    const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max)
-    // override changes are just for this part:
-    if (getSetting('disable-zoom-rounding')) scale = Math.clamped(scale, 1 / ratio, max)
-    else scale = Math.round(Math.clamped(scale, 1 / ratio, max) * 100) / 100
-  } else {
-    scale = canvas.stage.scale.x
-  }
-
-  // Constrain the pivot point using the new scale
-  if (Number.isNumeric(x) && x !== canvas.stage.pivot.x) {
-    const padw = 0.4 * (window.innerWidth / scale)
-    x = Math.clamped(x, -padw, d.width + padw)
-  } else x = canvas.stage.pivot.x
-  if (Number.isNumeric(y) && x !== canvas.stage.pivot.y) {
-    const padh = 0.4 * (window.innerHeight / scale)
-    y = Math.clamped(y, -padh, d.height + padh)
-  } else y = canvas.stage.pivot.y
-
-  // Return the constrained view dimensions
-  return { x, y, scale }
-}
-
-/**
  * Will zoom around cursor, and based on delta.
  */
 function zoom (event) {
@@ -305,21 +274,12 @@ Hooks.on('init', function () {
     type: Boolean,
     onChange: disableMiddleMouseScrollIfMiddleMousePanIsActive,
   })
-  game.settings.register(MODULE_ID, 'disable-zoom-rounding', {
-    name: 'Disable zoom rounding',
-    hint:
-      'Disables default Foundry behavior, which rounds zoom to the nearest 1%. Will make zooming smoother, especially for touchpad users.',
-    scope: 'client',
-    config: true,
-    default: true,
-    type: Boolean,
-  })
   game.settings.register(MODULE_ID, 'min-max-zoom-override', {
     name: 'Minimum/maximum zoom override',
     hint: 'Override for the minimum and maximum zoom scale limits. 3 is the Foundry default (x3 and x0.333 scaling).',
     scope: 'client',
     config: true,
-    default: CONFIG.Canvas.maxZoom, // 3.0
+    default: CONFIG.Canvas.maxZoom, // 3.0 is the default
     type: Number,
     onChange: value => {
       CONFIG.Canvas.maxZoom = value
@@ -412,31 +372,6 @@ Hooks.once('setup', function () {
     },
     'OVERRIDE',
   )
-  if (isNewerVersion(game.version, '10.269')) {
-    // temporary solution, due to constrainView becoming private in V10.
-    // see https://github.com/foundryvtt/foundryvtt/issues/7382
-    // or see https://github.com/foundryvtt/foundryvtt/issues/7189
-    Hooks.on('canvasPan', (board, constrained) => {
-      if (!getSetting('disable-zoom-rounding')) return
-
-      const d = canvas.dimensions
-      const max = CONFIG.Canvas.maxZoom
-      const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max)
-      constrained.scale = Math.clamped(constrained.scale, 1 / ratio, max)
-
-      board.stage.scale.set(constrained.scale, constrained.scale)
-      board.updateBlur(constrained.scale)
-    })
-  } else {
-    libWrapper.register(
-      MODULE_ID,
-      'Canvas.prototype._constrainView',
-      (obj) => {
-        return _constrainView_Override(obj)
-      },
-      'OVERRIDE', // only overrides a tiny part of the function... would be nice if foundry made it more modular
-    )
-  }
   libWrapper.register(
     MODULE_ID,
     'Canvas.prototype._onDragCanvasPan',
