@@ -25,7 +25,7 @@ function checkRotationRateLimit (layer) {
 }
 
 /**
- * note:  this is not perfect which is why it's opt-in.  see issue: https://github.com/itamarcu/ZoomPanOptions/issues/30
+ * note:  this is not perfect which is why it's opt-in.  see issue: https://github.com/shemetz/ZoomPanOptions/issues/30
  */
 function isTouchpad (event) {
   if (event.wheelDeltaY ? event.wheelDeltaY === -3 * event.deltaY : event.deltaMode === 0) {

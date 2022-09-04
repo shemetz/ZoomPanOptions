@@ -1,13 +1,13 @@
 # [Zoom/Pan Options](https://foundryvtt.com/packages/zoom-pan-options/)
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/itamarcu/ZoomPanOptions?style=for-the-badge) 
-![GitHub Releases](https://img.shields.io/github/downloads/itamarcu/ZoomPanOptions/latest/total?style=for-the-badge) 
-![GitHub All Releases](https://img.shields.io/github/downloads/itamarcu/ZoomPanOptions/total?style=for-the-badge&label=Downloads+total)  
-![Latest Supported Foundry Version](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://github.com/itamarcu/ZoomPanOptions/raw/master/module.json)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shemetz/ZoomPanOptions?style=for-the-badge) 
+![GitHub Releases](https://img.shields.io/github/downloads/shemetz/ZoomPanOptions/latest/total?style=for-the-badge) 
+![GitHub All Releases](https://img.shields.io/github/downloads/shemetz/ZoomPanOptions/total?style=for-the-badge&label=Downloads+total)  
+![Latest Supported Foundry Version](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://github.com/shemetz/ZoomPanOptions/raw/master/module.json)
 
 FoundryVTT module to change zooming and panning through the mouse or a touchpad. It has several settings, which can be toggled individually, and stored locally (per client).
 
-To install, browse for it in the module browser, or [directly copy the manifest link for the latest release](https://github.com/itamarcu/ZoomPanOptions/releases/latest/download/module.json).
+To install, browse for it in the module browser, or [directly copy the manifest link for the latest release](https://github.com/shemetz/ZoomPanOptions/releases/latest/download/module.json).
 
 # Features
 
@@ -43,7 +43,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Pan with two-finger drag on the touchpad.
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Shift+scroll and Ctrl+Shift+scroll.
-  (Note: if you're using a touchpad and you want to rotate a token, I recommend the [Alternative Rotation](https://github.com/itamarcu/AlternativeRotation) module - shift-dragging a token is easier than trying to accurately scroll the right amount/speed)
+  (Note: if you're using a touchpad and you want to rotate a token, I recommend the [Alternative Rotation](https://github.com/shemetz/AlternativeRotation) module - shift-dragging a token is easier than trying to accurately scroll the right amount/speed)
 - (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
 ### "Alternative" mode
@@ -76,6 +76,6 @@ Thanks to akrigline/Calego for merging with CanvasScroll and helping with libwra
 
 Thanks to TPNils for the touchpad auto-detection help!
 
-# [Cursor Zoom](https://github.com/itamarcu/CursorZoom)
+# [Cursor Zoom](https://github.com/shemetz/CursorZoom)
 My old foundry module, that only had the "Zoom around cursor" feature, and did not allow configuring it in the settings for each player.
 If you were a user of Cursor Zoom, please uninstall it and install this module. Your players will be able to each set their own preference.

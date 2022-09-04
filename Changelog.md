@@ -4,8 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.8.1] - 2022-09-04
+## [1.8.2] - 2022-09-04
 - Fixed bug that prevented rotating lights and measured templates
+- Changed my username from "itamarcu" to "shemetz"
 
 ## [1.8.0] - 2022-08-26
 - Added "Drag resistance mode" feature with new default value ("Scaling")
@@ -30,9 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Marked as compatible with Foundry v9 stable
 
 ## [1.6.5] - 2021-07-06
-- Fixed minimum/maximum zoom not carrying over after refreshing ([#28](https://github.com/itamarcu/ZoomPanOptions/issues/28))
+- Fixed minimum/maximum zoom not carrying over after refreshing ([#28](https://github.com/shemetz/ZoomPanOptions/issues/28))
 - Updated default min/max zoom scale to be just like the Foundry default - i.e. `3.0`.
-- Fixed rotation not working on Firefox ([#29](https://github.com/itamarcu/ZoomPanOptions/issues/29))
+- Fixed rotation not working on Firefox ([#29](https://github.com/shemetz/ZoomPanOptions/issues/29))
 
 ## [1.6.3] - 2021-07-06
 - Added automatic detection of touchpad movements in "Default" mode
@@ -66,19 +67,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## See also: [Unreleased]
 
-[1.3.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.0.0...1.3.0
-[1.3.7]: https://github.com/itamarcu/ZoomPanOptions/compare/1.3.0...1.3.7
-[1.4.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.3.7...1.4.0
-[1.5.3]: https://github.com/itamarcu/ZoomPanOptions/compare/1.4.0...1.5.3
-[1.6.1]: https://github.com/itamarcu/ZoomPanOptions/compare/1.5.3...1.6.1
-[1.6.3]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.1...1.6.3
-[1.6.5]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.3...1.6.5
-[1.6.8]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.5...1.6.8
-[1.6.9]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.8...1.6.9
-[1.6.10]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.9...1.6.10
-[1.7.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.10...1.7.0
-[1.7.2]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.0...1.7.2
-[1.7.4]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.2...1.7.4
-[1.8.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.4...1.8.0
-[1.8.1]: https://github.com/itamarcu/ZoomPanOptions/compare/1.8.0...1.8.1
-[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.8.1...HEAD
+[1.3.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.0.0...1.3.0
+[1.3.7]: https://github.com/shemetz/ZoomPanOptions/compare/1.3.0...1.3.7
+[1.4.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.3.7...1.4.0
+[1.5.3]: https://github.com/shemetz/ZoomPanOptions/compare/1.4.0...1.5.3
+[1.6.1]: https://github.com/shemetz/ZoomPanOptions/compare/1.5.3...1.6.1
+[1.6.3]: https://github.com/shemetz/ZoomPanOptions/compare/1.6.1...1.6.3
+[1.6.5]: https://github.com/shemetz/ZoomPanOptions/compare/1.6.3...1.6.5
+[1.6.8]: https://github.com/shemetz/ZoomPanOptions/compare/1.6.5...1.6.8
+[1.6.9]: https://github.com/shemetz/ZoomPanOptions/compare/1.6.8...1.6.9
+[1.6.10]: https://github.com/shemetz/ZoomPanOptions/compare/1.6.9...1.6.10
+[1.7.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.6.10...1.7.0
+[1.7.2]: https://github.com/shemetz/ZoomPanOptions/compare/1.7.0...1.7.2
+[1.7.4]: https://github.com/shemetz/ZoomPanOptions/compare/1.7.2...1.7.4
+[1.8.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.7.4...1.8.0
+[1.8.2]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.0...1.8.2
+[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.2...HEAD

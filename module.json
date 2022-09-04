@@ -3,7 +3,7 @@
   "id": "zoom-pan-options",
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "minimumCoreVersion": "0.6.0",
   "compatibleCoreVersion": "10",
   "compatibility": {
@@ -13,13 +13,13 @@
   "esmodules": [
     "scripts/zoom-pan-options.js"
   ],
-  "url": "https://github.com/itamarcu/ZoomPanOptions",
-  "manifest": "https://github.com/itamarcu/ZoomPanOptions/raw/master/module.json",
-  "download": "https://github.com/itamarcu/ZoomPanOptions/archive/master.zip",
-  "readme": "https://github.com/itamarcu/ZoomPanOptions/blob/master/Readme.md",
-  "changelog": "https://github.com/itamarcu/ZoomPanOptions/blob/master/Changelog.md",
-  "license": "https://github.com/itamarcu/ZoomPanOptions/blob/master/License.txt",
-  "bugs": "https://github.com/itamarcu/ZoomPanOptions/issues",
+  "url": "https://github.com/shemetz/ZoomPanOptions",
+  "manifest": "https://github.com/shemetz/ZoomPanOptions/raw/master/module.json",
+  "download": "https://github.com/shemetz/ZoomPanOptions/archive/master.zip",
+  "readme": "https://github.com/shemetz/ZoomPanOptions/blob/master/Readme.md",
+  "changelog": "https://github.com/shemetz/ZoomPanOptions/blob/master/Changelog.md",
+  "license": "https://github.com/shemetz/ZoomPanOptions/blob/master/License.txt",
+  "bugs": "https://github.com/shemetz/ZoomPanOptions/issues",
   "dependencies": [
     {
       "name": "lib-wrapper"
@@ -40,8 +40,8 @@
   },
   "authors": [
     {
-      "name": "shem",
-      "discord": "shem#0226",
+      "name": "shemetz",
+      "discord": "shemetz#0226",
       "email": "itamarcu+foundry@gmail.com",
       "reddit": "u/Shemetz"
     }
@@ -50,12 +50,12 @@
   "media": [
     {
       "type": "icon",
-      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/icon.png",
+      "url": "https://raw.githubusercontent.com/shemetz/ZoomPanOptions/master/metadata/icon.png",
       "caption": "Zoom/Pan Options"
     },
     {
       "type": "cover",
-      "url": "https://raw.githubusercontent.com/itamarcu/ZoomPanOptions/master/metadata/cover.png",
+      "url": "https://raw.githubusercontent.com/shemetz/ZoomPanOptions/master/metadata/cover.png",
       "caption": "Zoom/Pan Options"
     }
   ]
