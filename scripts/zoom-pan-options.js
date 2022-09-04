@@ -10,7 +10,7 @@ function getSetting (settingName) {
 }
 
 function checkRotationRateLimit (layer) {
-  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer._hover
+  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer.hover
   if (!hasTarget)
     return false
   const t = Date.now()
@@ -84,25 +84,23 @@ function _onWheel_Override (event) {
   const layer = canvas.activeLayer
 
   // Case 1 - rotate stuff
-  if (layer instanceof PlaceablesLayer) {
-    if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
-      return checkRotationRateLimit(layer) && layer._onMouseWheel(event)
-    }
-    const deltaY = event.wheelDelta !== undefined ? event.wheelDelta
-      // wheelDelta is undefined in firefox
-      : event.deltaY
-    if (mode === 'Touchpad' && shift) {
-      return checkRotationRateLimit(layer) && layer._onMouseWheel({
-        deltaY: deltaY,
-        shiftKey: shift && !ctrlOrMeta,
-      })
-    }
-    if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
-      return checkRotationRateLimit(layer) && layer._onMouseWheel({
-        deltaY: deltaY,
-        shiftKey: shift,
-      })
-    }
+  if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
+    return checkRotationRateLimit(layer) && layer._onMouseWheel(event)
+  }
+  const deltaY = event.wheelDelta !== undefined ? event.wheelDelta
+    // wheelDelta is undefined in firefox
+    : event.deltaY
+  if (mode === 'Touchpad' && shift) {
+    return checkRotationRateLimit(layer) && layer._onMouseWheel({
+      deltaY: deltaY,
+      shiftKey: shift && !ctrlOrMeta,
+    })
+  }
+  if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
+    return checkRotationRateLimit(layer) && layer._onMouseWheel({
+      deltaY: deltaY,
+      shiftKey: shift,
+    })
   }
 
   // Case 2 - zoom the canvas
@@ -302,7 +300,7 @@ Hooks.on('init', function () {
     name: 'Drag resistance mode',
     hint: 'By default, Foundry has a "drag resistance" of 0.25 grid units (so usually ~25).' +
       ' This is the minimum distance you need to move your cursor for a mouse drag event to be triggered.' +
-      " When it's too high you'll feel a dead zone when making small mouse drags (e.g. short pans, small drawings)." +
+      ' When it\'s too high you\'ll feel a dead zone when making small mouse drags (e.g. short pans, small drawings).' +
       ' Recommended setting: "Scaling", which scales to be a bit less than the visual size of a tool button',
     scope: 'client',
     config: true,
