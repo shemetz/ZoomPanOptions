@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2022-09-04
+- Fixed bug that prevented rotating lights and measured templates
+
 ## [1.8.0] - 2022-08-26
 - Added "Drag resistance mode" feature with new default value ("Scaling")
 - Removed "Disable Zoom Rounding" option, as it's no longer needed with Foundry v10
@@ -74,6 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.6.9]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.8...1.6.9
 [1.6.10]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.9...1.6.10
 [1.7.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.6.10...1.7.0
-[1.7.2]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.2...1.7.4
-[1.7.4]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.4...1.8.0
-[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.8.0...HEAD
+[1.7.2]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.0...1.7.2
+[1.7.4]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.2...1.7.4
+[1.8.0]: https://github.com/itamarcu/ZoomPanOptions/compare/1.7.4...1.8.0
+[1.8.1]: https://github.com/itamarcu/ZoomPanOptions/compare/1.8.0...1.8.1
+[Unreleased]: https://github.com/itamarcu/ZoomPanOptions/compare/1.8.1...HEAD
