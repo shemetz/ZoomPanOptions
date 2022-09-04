@@ -10,7 +10,8 @@ function getSetting (settingName) {
 }
 
 function checkRotationRateLimit (layer) {
-  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer.hover
+  const hoveredLayerThing = isNewerVersion(game.version, '10') ? layer.hover : layer._hover
+  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!hoveredLayerThing
   if (!hasTarget)
     return false
   const t = Date.now()
