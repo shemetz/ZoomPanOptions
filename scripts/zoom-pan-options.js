@@ -2,6 +2,8 @@ import { libWrapper } from './libwrapper-shim.js'
 
 const MODULE_ID = 'zoom-pan-options'
 
+let isConflictingWithLockView = false
+
 // note: 'Default' is the old name for 'AutoDetect'
 // 'DefaultMouse' is the old name for 'Mouse'
 
@@ -86,19 +88,19 @@ function _onWheel_Override (event) {
 
   // Case 1 - rotate stuff
   if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
-    return checkRotationRateLimit(layer) && layer._onMouseWheel(event)
+    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel(event)
   }
   const deltaY = event.wheelDelta !== undefined ? event.wheelDelta
     // wheelDelta is undefined in firefox
     : event.deltaY
   if (mode === 'Touchpad' && shift) {
-    return checkRotationRateLimit(layer) && layer._onMouseWheel({
+    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
       deltaY: deltaY,
       shiftKey: shift && !ctrlOrMeta,
     })
   }
   if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
-    return checkRotationRateLimit(layer) && layer._onMouseWheel({
+    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
       deltaY: deltaY,
       shiftKey: shift,
     })
@@ -130,6 +132,7 @@ function _onWheel_Override (event) {
  * Will zoom around cursor, and based on delta.
  */
 function zoom (event) {
+  if (!checkZoomLock()) return
   const multiplier = getSetting('zoom-speed-multiplier')
   let dz = -event.deltaY * 0.0005 * multiplier + 1
   // default foundry behavior if zoom-speed-multiplier is 0
@@ -161,6 +164,7 @@ function zoom (event) {
 }
 
 function panWithMultiplier (event) {
+  if (!checkPanLock()) return
   const multiplier = (1 / canvas.stage.scale.x) * getSetting('pan-speed-multiplier')
   const invertVerticalScroll = getSetting('invert-vertical-scroll') ? -1 : 1
   const x = canvas.stage.pivot.x + event.deltaX * multiplier
@@ -212,11 +216,36 @@ function _handleMouseDown_Wrapper (wrapped, ...args) {
   }
 }
 
+const checkZoomLock = () => {
+  // LockView compatibility workaround
+  if (isConflictingWithLockView) {
+    const lockZoom = canvas.scene.getFlag('LockView', 'lockZoom')
+    if (lockZoom) {
+      return false
+    }
+  }
+  return true
+}
+
+const checkPanLock = () => {
+  if (isConflictingWithLockView) {
+    const lockPan = canvas.scene.getFlag('LockView', 'lockPan')
+    if (lockPan) {
+      return false
+    }
+  }
+  return true
+}
+
 /**
  * Changes from original function:
  * `pad` value and `shift` multiplier are both customizable instead of being the default of 50 and 3.
  */
 function _onDragCanvasPan_override (event) {
+  if (!checkPanLock()) {
+    return
+  }
+
   // Throttle panning by 200ms
   const now = Date.now()
   if (now - (this._panTime || 0) <= 200) return
@@ -261,10 +290,32 @@ const migrateOldSettings = () => {
     game.settings.set('zoom-pan-options', 'pan-zoom-mode', 'Mouse')
   }
   if (mode === 'Default') {
-    console.log(`Zoom/Pan Options | Migrating old setting 'pan-zoom-mode': 'Default' to 'Mouse', plus 'auto-detect-touchpad': true`)
+    console.log(
+      `Zoom/Pan Options | Migrating old setting 'pan-zoom-mode': 'Default' to 'Mouse', plus 'auto-detect-touchpad': true`)
     game.settings.set('zoom-pan-options', 'pan-zoom-mode', 'Mouse')
     game.settings.set('zoom-pan-options', 'auto-detect-touchpad', true)
   }
+}
+
+const avoidLockViewIncompatibility = () => {
+  Hooks.on('libWrapper.ConflictDetected', (p1, p2, target, frozenNames) => {
+    if ((p1 === MODULE_ID && p2 === 'LockView') || p2 === MODULE_ID && p1 === 'LockView') {
+      if (frozenNames.includes('Canvas.prototype._onDragCanvasPan')) {
+        if (!game.user.isGM) {
+          if (!getSetting('disable-lock-view-compatibility-fix')) {
+            isConflictingWithLockView = true
+          }
+        }
+      }
+    }
+  })
+  game.settings.register(MODULE_ID, 'disable-lock-view-compatibility-fix', {
+    name: 'hidden setting in case I fuck up my attempt to fix that bug',
+    scope: 'client',
+    config: false,
+    default: false,
+    type: Boolean,
+  })
 }
 
 Hooks.on('init', function () {
@@ -386,6 +437,7 @@ Hooks.on('init', function () {
     type: Number,
   })
   migrateOldSettings()
+  avoidLockViewIncompatibility()
 })
 
 Hooks.once('setup', function () {
