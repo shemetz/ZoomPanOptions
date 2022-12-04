@@ -87,21 +87,24 @@ function _onWheel_Override (event) {
   const layer = canvas.activeLayer
 
   // Case 1 - rotate stuff
-  if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
-    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel(event)
-  }
   const deltaY = event.wheelDelta !== undefined ? event.wheelDelta
     // wheelDelta is undefined in firefox
     : event.deltaY
+  event.delta = deltaY
+  if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
+    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel(event)
+  }
   if (mode === 'Touchpad' && shift) {
     return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
-      deltaY: deltaY,
+      delta: deltaY,
+      deltaY: deltaY, // compatibility with Foundry versions before v10.291
       shiftKey: shift && !ctrlOrMeta,
     })
   }
   if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
     return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
-      deltaY: deltaY,
+      delta: deltaY,
+      deltaY: deltaY, // compatibility with Foundry versions before v10.291
       shiftKey: shift,
     })
   }
