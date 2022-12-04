@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.5] - 2022-12-04
+- Fixed compatibility with Foundry v10.291, bug broke rotation (#42)
+
 ## [1.8.4] - 2022-10-05
 - Added workaround to fix incompatibility with LockView (#31)
 
@@ -86,4 +89,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.8.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.7.4...1.8.0
 [1.8.3]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.0...1.8.3
 [1.8.4]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.3...1.8.4
-[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.4...HEAD
+[1.8.5]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.4...1.8.5
+[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.5...HEAD
