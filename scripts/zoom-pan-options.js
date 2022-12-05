@@ -87,7 +87,7 @@ function _onWheel_Override (event) {
   const layer = canvas.activeLayer
 
   // Case 1 - rotate stuff
-  const deltaY = event.wheelDelta !== undefined ? event.wheelDelta
+  const deltaY = event.wheelDelta !== undefined ? -event.wheelDelta
     // wheelDelta is undefined in firefox
     : event.deltaY
   event.delta = deltaY
