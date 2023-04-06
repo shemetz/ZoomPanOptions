@@ -137,10 +137,12 @@ function _onWheel_Override (event) {
 function zoom (event) {
   if (!checkZoomLock()) return
   const multiplier = getSetting('zoom-speed-multiplier')
-  // scaleChangeRatio was originally called "dz" but that's not really descriptive.  it's usually 1.05 or 0.95
-  let scaleChangeRatio = -event.deltaY * 0.0005 * multiplier + 1
-  // default foundry behavior if zoom-speed-multiplier is 0
-  if (multiplier === 0) scaleChangeRatio = event.deltaY < 0 ? 1.05 : 0.95
+  // scaleChangeRatio was originally called "dz" but that's not really descriptive.  it's usually 1.05 or 0.95.
+  // default foundry behavior is 1.05 and 0.95, but I actually change it to 1.05 and 0.95238 (*105% and /105%).
+  // I do this because it makes one zoom-in tick plus one zoom-out tick cancel each other; their product is 1.
+  const fivePercentZoom = event.deltaY < 0 ? 1.05 : (1 / 1.05)
+  const speedBasedZoom = 1.05 ** (-event.deltaY * 0.01 * multiplier)
+  const scaleChangeRatio = multiplier === 0 ? fivePercentZoom : speedBasedZoom
 
   if (!getSetting('zoom-around-cursor')) {
     canvas.pan({ scale: scaleChangeRatio * canvas.stage.scale.x })
