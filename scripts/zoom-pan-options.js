@@ -159,11 +159,7 @@ function zoom (event) {
   }
 
   // Acquire the cursor position transformed to Canvas coordinates
-  const t = canvas.stage.worldTransform
-  const canvasEventPos = {
-    x: (-t.tx + event.clientX) / canvas.stage.scale.x,
-    y: (-t.ty + event.clientY) / canvas.stage.scale.y,
-  }
+  const canvasEventPos = canvas.stage.worldTransform.applyInverse({ x: event.clientX, y: event.clientY })
   const canvasPivotPos = canvas.stage.pivot
   const deltaX = canvasEventPos.x - canvasPivotPos.x
   const deltaY = canvasEventPos.y - canvasPivotPos.y
