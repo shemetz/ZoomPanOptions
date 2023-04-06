@@ -137,16 +137,17 @@ function _onWheel_Override (event) {
 function zoom (event) {
   if (!checkZoomLock()) return
   const multiplier = getSetting('zoom-speed-multiplier')
-  let dz = -event.deltaY * 0.0005 * multiplier + 1
+  // scaleChangeRatio was originally called "dz" but that's not really descriptive.  it's usually 1.05 or 0.95
+  let scaleChangeRatio = -event.deltaY * 0.0005 * multiplier + 1
   // default foundry behavior if zoom-speed-multiplier is 0
-  if (multiplier === 0) dz = event.deltaY < 0 ? 1.05 : 0.95
+  if (multiplier === 0) scaleChangeRatio = event.deltaY < 0 ? 1.05 : 0.95
 
   if (!getSetting('zoom-around-cursor')) {
-    canvas.pan({ scale: dz * canvas.stage.scale.x })
+    canvas.pan({ scale: scaleChangeRatio * canvas.stage.scale.x })
     return
   }
 
-  const scale = dz * canvas.stage.scale.x
+  const scale = scaleChangeRatio * canvas.stage.scale.x  // scale x and scale y are the same
   const d = canvas.dimensions
   const max = CONFIG.Canvas.maxZoom
   const min = 1 / Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max)
@@ -159,11 +160,21 @@ function zoom (event) {
 
   // Acquire the cursor position transformed to Canvas coordinates
   const t = canvas.stage.worldTransform
-  const dx = ((-t.tx + event.clientX) / canvas.stage.scale.x - canvas.stage.pivot.x) * (dz - 1)
-  const dy = ((-t.ty + event.clientY) / canvas.stage.scale.y - canvas.stage.pivot.y) * (dz - 1)
-  const x = canvas.stage.pivot.x + dx
-  const y = canvas.stage.pivot.y + dy
-  canvas.pan({ x, y, scale })
+  const canvasEventPos = {
+    x: (-t.tx + event.clientX) / canvas.stage.scale.x,
+    y: (-t.ty + event.clientY) / canvas.stage.scale.y,
+  }
+  const canvasPivotPos = canvas.stage.pivot
+  const deltaX = canvasEventPos.x - canvasPivotPos.x
+  const deltaY = canvasEventPos.y - canvasPivotPos.y
+  // scaledDelta will be about 5% of the delta vector between center-screen and cursor, in world coords
+  const scaledDeltaX = deltaX * (scaleChangeRatio - 1)
+  const scaledDeltaY = deltaY * (scaleChangeRatio - 1)
+  // new x and y will be close to the previous center screen, but pushed a bit towards cursor;  just enough to keep the
+  // cursor in the exact same world coords.
+  const x = canvasPivotPos.x + scaledDeltaX
+  const y = canvasPivotPos.y + scaledDeltaY
+  canvas.pan({ scale, x, y })
 }
 
 function panWithMultiplier (event) {
