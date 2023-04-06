@@ -164,8 +164,8 @@ function zoom (event) {
   const deltaX = canvasEventPos.x - canvasPivotPos.x
   const deltaY = canvasEventPos.y - canvasPivotPos.y
   // scaledDelta will be about 5% of the delta vector between center-screen and cursor, in world coords
-  const scaledDeltaX = deltaX * (scaleChangeRatio - 1)
-  const scaledDeltaY = deltaY * (scaleChangeRatio - 1)
+  const scaledDeltaX = deltaX * (scaleChangeRatio - 1) / scaleChangeRatio
+  const scaledDeltaY = deltaY * (scaleChangeRatio - 1) / scaleChangeRatio
   // new x and y will be close to the previous center screen, but pushed a bit towards cursor;  just enough to keep the
   // cursor in the exact same world coords.
   const x = canvasPivotPos.x + scaledDeltaX
