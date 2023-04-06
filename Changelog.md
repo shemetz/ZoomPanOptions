@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2023-04-07
+- Improved (and fixed) zoom precision - will now actually center exactly on the cursor!
+- Fixed incompatibility with grape_juice's isometric module (#48)
+- Changed speed-based zoom calculation to be a bit more consistent (my apologies if this messes with your settings!)
+- Refactored zoom code to be more readable
+- Added localization files to enable translations of settings
+
 ## [1.8.6] - 2022-12-06
 - Fixed reversed rotation (#43)
 
@@ -94,4 +101,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.8.4]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.3...1.8.4
 [1.8.5]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.4...1.8.5
 [1.8.6]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.5...1.8.6
-[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.6...HEAD
+[1.9.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.6...1.9.0
+[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.9.0...HEAD
