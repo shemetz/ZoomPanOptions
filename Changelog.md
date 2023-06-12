@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2023-06-12
+- Fixed compatibility with Foundry v11, particularly for middle-mouse pan, though the solution is ugly (#49)
+
 ## [1.9.0] - 2023-04-07
 - Improved (and fixed) zoom precision - will now actually center exactly on the cursor!
 - Fixed incompatibility with grape_juice's isometric module (#48)
@@ -102,4 +105,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.8.5]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.4...1.8.5
 [1.8.6]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.5...1.8.6
 [1.9.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.6...1.9.0
-[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.9.0...HEAD
+[1.10.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.9.0...1.10.0
+[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.10.0...HEAD
