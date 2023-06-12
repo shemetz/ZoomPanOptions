@@ -36,8 +36,8 @@
         "hint": "Multiplies zoom speed, affecting scaling speed. 0.1 or 10 might be better for some touchpads. 0 for default Foundry behavior (which ignores scroll \"intensity\", and feels worse for touchpads)."
       },
       "pan-speed-multiplier": {
-        "name": "Pan speed",
-        "hint": "Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas."
+        "name": "Pan speed (for touchpad mode)",
+        "hint": "Multiplies pan speed if you're using touchpad/alternative mode. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas."
       },
       "invert-vertical-scroll": {
         "name": "Invert vertical scroll",
