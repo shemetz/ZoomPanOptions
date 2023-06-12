@@ -198,38 +198,181 @@ function disableMiddleMouseScrollIfMiddleMousePanIsActive (isActive) {
   }
 }
 
-function _handleMouseDown_Wrapper (wrapped, ...args) {
-  if (!getSetting('middle-mouse-pan')) return wrapped(...args)
-  const event = args[0]
-  if (event.data.originalEvent.button === 0) return wrapped(...args) // left-click
-  if (event.data.originalEvent.button !== 1) return // additional buttons other than middle click - still ignoring!
-
-  // Middle-mouse click will *only* pan;  ignoring anything else on the canvas
+const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
+  if (!getSetting('middle-mouse-pan')) return true
+  if (mouseDownEvent.data.originalEvent.button !== 1) return true // buttons other than middle click - ignoring
   const mim = canvas.mouseInteractionManager
-  if (![mim.states.HOVER, mim.states.CLICKED, mim.states.DRAG].includes(mim.state)) return wrapped(...args)
-  canvas.currentMouseManager = mim
+  // Copying (and mildly altering) code from MouseInteractionManager functions. mostly replacing references
 
-  // Update event data
-  event.data.object = mim.object
-  event.data.origin = event.data.getLocalPosition(mim.layer)
+  const mim_handleRightDown = (event) => {
+    if ( ![mim.states.HOVER, mim.states.CLICKED, mim.states.DRAG].includes(mim.state) ) return;
+    //if ( event.button !== 2 ) return; // Only support standard left-click
 
-  // piggy-backing off of the right-mouse-drag code, for lack of a better option
-  const action = 'clickRight'
-  if (!mim.can(action, event)) return
-  event.stopPropagation()
-  mim._dragRight = true
+    // Determine double vs single click
+    const now = Date.now();
+    //const isDouble = (now - mim.rcTime) <= 250;
+    mim.rcTime = now;
 
-  // Upgrade hover to clicked
-  if (mim.state === mim.states.HOVER) mim.state = mim.states.CLICKED
-  if (CONFIG.debug.mouseInteraction) console.log(`${mim.object.constructor.name} | ${action}`)
+    // Update event data
+    mim.interactionData.origin = event.getLocalPosition(mim.layer);
 
-  // Trigger callback function
-  mim.callback(action, event)
-
-  // Activate drag handlers
-  if ((mim.state < mim.states.DRAG) && mim.can('dragRight', event)) {
-    mim._activateDragEvents()
+    // Dispatch to double and single-click handlers
+    //if ( isDouble && mim.can("clickRight2", event) ) return mim.#handleClickRight2(event);
+    //else
+    return mim_handleClickRight(event);
   }
+
+  const mim_handleClickRight = (event) => {
+    const action = "clickRight";
+    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
+    if ( !mim.can(action, event) ) return
+    mim._dragRight = true;
+
+    //// Was the right-click event handled by the callback?
+    //if ( mim.callback(action, event) === false ) return mim.#debug(action, event, mim.handlerOutcomes.REFUSED);
+
+    // Upgrade the workflow state and activate drag event handlers
+    if ( mim.state === mim.states.HOVER ) mim.state = mim.states.CLICKED;
+    canvas.currentMouseManager = mim;
+    if ( (mim.state < mim.states.DRAG) && mim.can("dragRight", event) ) mim_activateDragEvents();
+    //return mim.#debug(action, event);
+  }
+
+  const mim_activateDragEvents = () => {
+    mim_deactivateDragEvents();
+    mim.layer.on("pointermove", mim_handleMouseMove);
+    //if ( !mim._dragRight ) {
+    //  canvas.app.view.addEventListener("contextmenu", mim.#handlers.contextmenu, {capture: true});
+    //}
+  }
+
+  const mim_deactivateDragEvents = () =>  {
+    mim.layer.off("pointermove", mim_handleMouseMove);
+    //canvas.app.view.removeEventListener("contextmenu", mim.#handlers.contextmenu, {capture: true});
+  }
+
+  const mim_handleMouseMove = (event) => {
+    if ( ![mim.states.CLICKED, mim.states.DRAG].includes(mim.state) ) return;
+
+    // Limit dragging to 60 updates per second
+    const now = Date.now();
+    if ( (now - mim.dragTime) < canvas.app.ticker.elapsedMS ) return;
+    mim.dragTime = now;
+
+    // Update interaction data
+    const data = mim.interactionData;
+    data.destination = event.getLocalPosition(mim.layer);
+
+    // Begin a new drag event
+    if ( mim.state === mim.states.CLICKED ) {
+      const dx = data.destination.x - data.origin.x;
+      const dy = data.destination.y - data.origin.y;
+      const dz = Math.hypot(dx, dy);
+      const r = mim.options.dragResistance || (canvas.dimensions.size / 4);
+      if ( dz >= r ) {
+        return mim_handleDragStart(event);
+      }
+    }
+
+    // Continue a drag event
+    else return mim_handleDragMove(event);
+  }
+
+  const mim_handleDragStart = (event) => {
+    clearTimeout(mim.constructor.longPressTimeout);
+    const action = mim._dragRight ? "dragRightStart" : "dragLeftStart";
+    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
+    if ( !mim.can(action, event) ) return
+    const handled = mim.callback(action, event);
+    if ( handled ) mim.state = mim.states.DRAG;
+    //return mim.#debug(action, event, handled ? mim.handlerOutcomes.ACCEPTED : mim.handlerOutcomes.REFUSED);
+  }
+
+  const mim_handleDragMove = (event) => {
+    clearTimeout(mim.constructor.longPressTimeout);
+    const action = mim._dragRight ? "dragRightMove" : "dragLeftMove";
+    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
+    if ( !mim.can(action, event) ) return
+    const handled = mim.callback(action, event);
+    if ( handled ) mim.state = mim.states.DRAG;
+    //return mim.#debug(action, event, handled ? mim.handlerOutcomes.ACCEPTED : mim.handlerOutcomes.REFUSED);
+  }
+
+
+  mim_handleRightDown(mouseDownEvent)
+  // `return false` will call stopPropagation and preventDefault
+  return false
+}
+
+const handleMouseUp_forMiddleClickDrag = (mouseUpEvent) => {
+  if (!getSetting('middle-mouse-pan')) return true
+  if (mouseUpEvent.data.originalEvent.button !== 1) return true // buttons other than middle click - ignoring
+  const mim = canvas.mouseInteractionManager
+  // Copying (and mildly altering) code from MouseInteractionManager functions. mostly replacing references
+
+  const mim_handleMouseUp = (event) => {
+    //clearTimeout(mim.constructor.longPressTimeout);
+    //// If this is a touch hover event, treat it as a drag
+    //if ( (mim.state === mim.states.HOVER) && (event.pointerType === "touch") ) {
+    //  mim.state = mim.states.DRAG;
+    //}
+
+    // Save prior state
+    const priorState = mim.state;
+
+    // Update event data
+    mim.interactionData.destination = event.getLocalPosition(mim.layer);
+
+    //// Handling of a degenerate case:
+    //// When the manager is in a clicked state and that the button is released in another object
+    //const emulateHoverOut = (mim.state === mim.states.CLICKED) && !event.defaultPrevented
+    //  && (event.target !== mim.object) && (event.target?.parent !== mim.object);
+    //if ( emulateHoverOut ) {
+    //  event.stopPropagation();
+    //  mim.state = mim.states.HOVER;
+    //  mim.#deactivateClickEvents();
+    //  mim.#handleMouseOut(event);
+    //}
+
+    if ( mim.state >= mim.states.DRAG ) {
+      event.stopPropagation();
+      if ( event.type.startsWith("right") && !mim._dragRight ) return;
+      mim_handleDragDrop(event);
+    }
+
+    // Continue a multi-click drag workflow
+    if ( event.defaultPrevented ) {
+      mim.state = priorState;
+      //return mim.#debug("mouseUp", event, mim.handlerOutcomes.SKIPPED);
+      return
+    }
+
+    // Cancel the workflow
+    return mim_handleDragCancel(event);
+  }
+
+  const mim_handleDragDrop = (event) => {
+    const action = mim._dragRight ? "dragRightDrop" : "dragLeftDrop";
+    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
+    if ( !mim.can(action, event) ) return
+
+    // Was the drag-drop event handled by the callback?
+    //if ( mim.callback(action, event) === false ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
+    if ( mim.callback(action, event) === false ) return
+
+    // Update the workflow state
+    mim.state = mim.states.DROP;
+    //return mim.#debug(action, event);
+  }
+
+  const mim_handleDragCancel = (event) => {
+    mim.cancel(event);
+  }
+
+
+  mim_handleMouseUp(mouseUpEvent)
+  // `return false` will call stopPropagation and preventDefault
+  return false
 }
 
 const checkZoomLock = () => {
@@ -462,20 +605,16 @@ Hooks.once('setup', function () {
     _onDragCanvasPan_override,
     'OVERRIDE', // (same as above)
   )
-  libWrapper.register(
-    MODULE_ID,
-    'MouseInteractionManager.prototype._handleMouseDown',
-    function (wrapped, ...args) {
-      return _handleMouseDown_Wrapper.bind(this)(wrapped, ...args)
-    },
-    'MIXED', // only overrides if it's a middle click
-  )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   CONFIG.Canvas.maxZoom = getSetting('min-max-zoom-override')
   console.log('Done setting up Zoom/Pan Options.')
 })
 
-Hooks.once('ready', () => {
-  Hooks.on('canvasPan', updateDragResistance)
+Hooks.on('canvasReady', () => {
+  canvas.stage.on("mousedown", handleMouseDown_forMiddleClickDrag)
+  canvas.stage.on("mouseup", handleMouseUp_forMiddleClickDrag)  // technically this isn't necessary, based on testing
   updateDragResistance()
+})
+Hooks.once('canvasReady', () => {
+  Hooks.on('canvasPan', updateDragResistance)
 })

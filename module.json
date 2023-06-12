@@ -1,14 +1,11 @@
 {
-  "name": "zoom-pan-options",
   "id": "zoom-pan-options",
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
   "version": "1.9.0",
-  "minimumCoreVersion": "0.6.0",
-  "compatibleCoreVersion": "10",
   "compatibility": {
-    "minimum": "0.6",
-    "verified": "10.291"
+    "minimum": "11",
+    "verified": "11"
   },
   "esmodules": [
     "scripts/zoom-pan-options.js"
@@ -28,11 +25,6 @@
   "changelog": "https://github.com/shemetz/ZoomPanOptions/blob/master/Changelog.md",
   "license": "https://github.com/shemetz/ZoomPanOptions/blob/master/License.txt",
   "bugs": "https://github.com/shemetz/ZoomPanOptions/issues",
-  "dependencies": [
-    {
-      "name": "lib-wrapper"
-    }
-  ],
   "relationships": {
     "requires": [
       {
@@ -49,7 +41,7 @@
   "authors": [
     {
       "name": "shemetz",
-      "discord": "shemetz#0226",
+      "discord": "shemetz",
       "email": "itamarcu+foundry@gmail.com",
       "reddit": "u/Shemetz"
     }
