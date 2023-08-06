@@ -51,6 +51,19 @@
         "name": "\"shift\" value when dragging something to the edge of the screen",
         "hint": "When holding down the cursor and moving it towards the edge of the screen, the canvas will pan.  \"shift\" is the panning distance in tiles. Foundry default is 3 tiles."
       }
+    },
+    "keybindings": {
+      "toggle-touchpad-mode": {
+        "name": "Toggle Mouse/Touchpad Mode"
+      },
+      "toggle-alternative-mode": {
+        "name": "Toggle Mouse/Alternative Mode"
+      },
+      "notifications": {
+        "Mouse": "Zoom/Pan Options: Mouse mode enabled.",
+        "Touchpad": "Zoom/Pan Options: Touchscreen mode enabled.",
+        "Alternative": "Zoom/Pan Options: Alternative mode enabled."
+      }
     }
   }
 }
