@@ -15,6 +15,10 @@ function localizeSetting (scope, str) {
   return game.i18n.localize(MODULE_ID + '.settings.' + scope + '.' + str)
 }
 
+function localizeKeybinding(scope, str) {
+  return game.i18n.localize(MODULE_ID + '.keybindings.' + scope + '.' + str);
+}
+
 function checkRotationRateLimit (layer) {
   const hoveredLayerThing = isNewerVersion(game.version, '10') ? layer.hover : layer._hover
   const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!hoveredLayerThing
@@ -580,6 +584,47 @@ Hooks.on('init', function () {
     default: 3,
     type: Number,
   })
+
+// Register Keybindings
+const {CONTROL, ALT} = KeyboardManager.MODIFIER_KEYS;
+game.keybindings.register(MODULE_ID, "toggleTouchpadMode", {
+  name: localizeKeybinding('toggle-touchpad-mode', 'name'),
+  editable: [
+    {
+      key: "KeyM",
+      modifiers: [CONTROL]
+    }
+  ],
+  onDown: () => {
+    const mode = (game.settings.get(MODULE_ID, 'pan-zoom-mode') === "Mouse")
+      ? 'Touchpad'
+      : 'Mouse';
+
+    game.settings.set(MODULE_ID, 'pan-zoom-mode', mode);
+    ui.notifications.info(localizeKeybinding('notifications', mode));
+  },
+  repeat: false
+});
+
+game.keybindings.register(MODULE_ID, "toggleAlternativeMode", {
+  name: localizeKeybinding('toggle-alternative-mode', 'name'),
+  editable: [
+    {
+      key: "KeyM",
+      modifiers: [ALT]
+    }
+  ],
+  onDown: () => {
+    const mode = (game.settings.get(MODULE_ID, 'pan-zoom-mode') === "Mouse")
+      ? 'Alternative'
+      : 'Mouse';
+
+    game.settings.set(MODULE_ID, 'pan-zoom-mode', mode);
+    ui.notifications.info(localizeKeybinding('notifications', mode));
+  },
+  repeat: false
+});
+
   migrateOldSettings()
   avoidLockViewIncompatibility()
 })
