@@ -586,20 +586,15 @@ Hooks.on('init', function () {
   })
 
   // Register Keybindings
-  const {CONTROL, ALT} = KeyboardManager.MODIFIER_KEYS;
+
   game.keybindings.register(MODULE_ID, "toggleTouchpadMode", {
     name: localizeKeybinding('toggle-touchpad-mode', 'name'),
-    editable: [
-      {
-        key: "KeyM",
-        modifiers: [CONTROL]
-      }
-    ],
+    editable: [],
     onDown: () => {
+      // will toggle between Mouse and Touchpad
       const mode = ['Mouse', 'Alternative'].includes(game.settings.get(MODULE_ID, 'pan-zoom-mode'))
         ? 'Touchpad'
         : 'Mouse';
-
       game.settings.set(MODULE_ID, 'pan-zoom-mode', mode);
       ui.notifications.info(localizeKeybinding('notifications', mode));
     },
@@ -608,17 +603,12 @@ Hooks.on('init', function () {
 
   game.keybindings.register(MODULE_ID, "toggleAlternativeMode", {
     name: localizeKeybinding('toggle-alternative-mode', 'name'),
-    editable: [
-      {
-        key: "KeyM",
-        modifiers: [ALT]
-      }
-    ],
+    editable: [],
     onDown: () => {
+      // will toggle between Mouse and Alternative
       const mode = ['Mouse', 'Touchpad'].includes(game.settings.get(MODULE_ID, 'pan-zoom-mode'))
         ? 'Alternative'
         : 'Mouse';
-
       game.settings.set(MODULE_ID, 'pan-zoom-mode', mode);
       ui.notifications.info(localizeKeybinding('notifications', mode));
     },
