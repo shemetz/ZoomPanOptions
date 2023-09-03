@@ -68,6 +68,10 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 ## Invert vertical scroll
 - Only used in touchpad and alternative modes. If set to true, you will scroll up when dragging/scrolling down.
 
+## Keybindings
+- You can add keyboard shortcuts to manually toggle between Touchpad and Mouse, or Touchpad and Alternative, which should
+be useful in case you don't get good enough behavior out of Auto-detect.
+
 # Credits
 
 Thanks to mrkwnzl#7407 for the touchpad support and testing!
