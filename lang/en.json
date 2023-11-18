@@ -28,8 +28,8 @@
         "choice_alternative": "Alternative: can pan with Shift, rotate while holding Alt"
       },
       "auto-detect-touchpad": {
-        "name": "Auto-detect touchpad",
-        "hint": "Will try to auto-detect touchpads;  going with either Mouse or Touchpad depending on result (or Alternative if it was selected)."
+        "name": "Auto-detect touchpad (BUGGY)",
+        "hint": "Will try to auto-detect touchpads;  going with either Mouse or Touchpad depending on result (or Alternative if it was selected).  This feature is buggy and doesn't work for everyone!"
       },
       "zoom-speed-multiplier": {
         "name": "Zoom speed",

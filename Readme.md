@@ -52,8 +52,9 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
 - (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
-## Auto-detect touchpad
+## Auto-detect touchpad (BUGGY)
 - Will auto-detect touchpad movements (any "scroll" event that includes both vertical and horizontal components), and treat them as if the "Touchpad" or "Alternative" mode is active.
+- This feature is buggy, which is why it defaults to false.  If you can improve it with a PR, please do!
 
 ## Pan speed multiplier
 - Only used in touchpad and alternative modes. Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.
