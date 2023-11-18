@@ -26,7 +26,7 @@ function checkRotationRateLimit (layer) {
     return false
   const t = Date.now()
   const rate_limit = isNewerVersion(game.version, '9.231')
-    ? game.mouse.MOUSE_WHEEL_RATE_LIMIT
+    ? game.mouse.constructor.MOUSE_WHEEL_RATE_LIMIT
     : game.keyboard.constructor.MOUSE_WHEEL_RATE_LIMIT
 
   if ((t - game.keyboard._wheelTime) < rate_limit)
