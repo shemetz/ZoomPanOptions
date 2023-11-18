@@ -4,9 +4,6 @@ const MODULE_ID = 'zoom-pan-options'
 
 let isConflictingWithLockView = false
 
-// note: 'Default' is the old name for 'AutoDetect'
-// 'DefaultMouse' is the old name for 'Mouse'
-
 function getSetting (settingName) {
   return game.settings.get(MODULE_ID, settingName)
 }
@@ -20,14 +17,12 @@ function localizeKeybinding (scope, str) {
 }
 
 function checkRotationRateLimit (layer) {
-  const hoveredLayerThing = isNewerVersion(game.version, '10') ? layer.hover : layer._hover
+  const hoveredLayerThing = layer.hover
   const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!hoveredLayerThing
   if (!hasTarget)
     return false
   const t = Date.now()
-  const rate_limit = isNewerVersion(game.version, '9.231')
-    ? game.mouse.constructor.MOUSE_WHEEL_RATE_LIMIT
-    : game.keyboard.constructor.MOUSE_WHEEL_RATE_LIMIT
+  const rate_limit = game.mouse.constructor.MOUSE_WHEEL_RATE_LIMIT
 
   if ((t - game.keyboard._wheelTime) < rate_limit)
     return false
@@ -105,14 +100,12 @@ function _onWheel_Override (event) {
   if (mode === 'Touchpad' && shift) {
     return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
       delta: deltaY,
-      deltaY: deltaY, // compatibility with Foundry versions before v10.291
       shiftKey: shift && !ctrlOrMeta,
     })
   }
   if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
     return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
       delta: deltaY,
-      deltaY: deltaY, // compatibility with Foundry versions before v10.291
       shiftKey: shift,
     })
   }
@@ -443,20 +436,6 @@ const updateDragResistance = () => {
   }
 }
 
-const migrateOldSettings = () => {
-  const mode = getSetting('pan-zoom-mode')
-  if (mode === 'DefaultMouse') {
-    console.log(`Zoom/Pan Options | Migrating old setting 'pan-zoom-mode': 'DefaultMouse' to 'Mouse'`)
-    game.settings.set(MODULE_ID, 'pan-zoom-mode', 'Mouse')
-  }
-  if (mode === 'Default') {
-    console.log(
-      `Zoom/Pan Options | Migrating old setting 'pan-zoom-mode': 'Default' to 'Mouse', plus 'auto-detect-touchpad': true`)
-    game.settings.set(MODULE_ID, 'pan-zoom-mode', 'Mouse')
-    game.settings.set(MODULE_ID, 'auto-detect-touchpad', true)
-  }
-}
-
 const avoidLockViewIncompatibility = () => {
   Hooks.on('libWrapper.ConflictDetected', (p1, p2, target, frozenNames) => {
     if ((p1 === MODULE_ID && p2 === 'LockView') || p2 === MODULE_ID && p1 === 'LockView') {
@@ -614,18 +593,13 @@ Hooks.on('init', function () {
     repeat: false,
   })
 
-  migrateOldSettings()
   avoidLockViewIncompatibility()
 })
 
 Hooks.once('setup', function () {
-  const wheelPrototype = isNewerVersion(game.version, '9.231')
-    ? 'MouseManager.prototype._onWheel'
-    : 'KeyboardManager.prototype._onWheel'
-
   libWrapper.register(
     MODULE_ID,
-    wheelPrototype,
+    'MouseManager.prototype._onWheel',
     (event) => {
       return _onWheel_Override(event)
     },
