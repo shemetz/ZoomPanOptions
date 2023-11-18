@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2023-11-18
+- Fixed rate limit (#50)
+- Added clarifications that auto-detect is buggy
+- Removed libwrapper shim (it's common enough, people will just have it enabled)
+- Removed old code (pre-foundry-v11)
+
 ## [1.11.0] - 2023-09-03
 - Added keyboard shortcuts to flip between modes (#52, thanks @mrkwnzl)
 
@@ -109,5 +115,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.8.6]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.5...1.8.6
 [1.9.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.8.6...1.9.0
 [1.10.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.9.0...1.10.0
-[1.11.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.0.0...1.11.0
-[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.11.0...HEAD
+[1.11.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.10.0...1.11.0
+[1.12.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.11.0...1.12.0
+[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.12.0...HEAD
