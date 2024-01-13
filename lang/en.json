@@ -10,8 +10,12 @@
         "hint": "Middle mouse press will pan the canvas, instead of the default of doing nothing."
       },
       "min-max-zoom-override": {
-        "name": "Minimum/maximum zoom override",
-        "hint": "Override for the minimum and maximum zoom scale limits. 3 is the Foundry default (x3 and x0.333 scaling)."
+        "name": "Maximum zoom override",
+        "hint": "Override for the maximum zoom scale limits. 3 is the Foundry default (x3 and x0.333 scaling)."
+      },
+      "min-zoom-override": {
+        "name": "Minimum zoom override",
+        "hint": "Override for the minimum zoom scale limits. 0.333 is the Foundry default."
       },
       "drag-resistance-mode": {
         "name": "Drag resistance mode",
