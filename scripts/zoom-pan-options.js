@@ -10,6 +10,10 @@ function localizeSetting (scope, str) {
   return game.i18n.localize(MODULE_ID + '.settings.' + scope + '.' + str)
 }
 
+function localizeUi (scope, str) {
+  return game.i18n.localize(MODULE_ID + '.ui.' + scope + '.' + str)
+}
+
 function localizeKeybinding (scope, str) {
   return game.i18n.localize(MODULE_ID + '.keybindings.' + scope + '.' + str)
 }
@@ -149,11 +153,8 @@ function zoom (event) {
   }
 
   const scale = scaleChangeRatio * canvas.stage.scale.x  // scale x and scale y are the same
-  const d = canvas.dimensions
-  const max = getSetting('min-max-zoom-override')
-  const invMin = getSetting('min-zoom-override')
-  const min = 1 / Math.max(d.width / window.innerWidth, d.height / window.innerHeight, invMin)
-
+  const max = canvas.scene.getFlag(MODULE_ID, 'maxZoom') ?? getSetting('max-zoom-override')
+  const min = canvas.scene.getFlag(MODULE_ID, 'minZoom') ?? getSetting('min-zoom-override')
   if (scale > max || scale < min) {
     console.log('Zoom/Pan Options |', `scale exceeds limit (${scale}), bounding to interval [${min}, ${max}).`)
     canvas.pan({ scale: scale > max ? max : scale < min ? min : scale })
@@ -422,6 +423,16 @@ function _onDragCanvasPan_override (event) {
   if (dx || dy) return this.animatePan({ x: this.stage.pivot.x + dx, y: this.stage.pivot.y + dy, duration: 200 })
 }
 
+/**
+ * Changes from original function:
+ * `max` value is based on settings, rather than being based on CONFIG.maxZoom, which this module changes.
+ */
+function _computeLumaReduction_override () {
+  const max = canvas.scene.getFlag(MODULE_ID, 'maxZoom') ?? getSetting('max-zoom-override')
+  const zoom = canvas.stage.worldTransform.d / max
+  return Math.mix(0.6, 0.02, zoom)
+}
+
 const updateDragResistance = () => {
   const setting = getSetting('drag-resistance-mode')
   if (setting === 'Foundry Default') {
@@ -433,6 +444,39 @@ const updateDragResistance = () => {
     const multiplier = 20 // feels like about 1% of width
     canvas.mouseInteractionManager.options.dragResistance = multiplier / scale
   }
+}
+
+const addZoomSettingsToSceneConfig = (sceneConfig, html) => {
+  const scene = sceneConfig.object
+  const minMapZoom = scene.getFlag(MODULE_ID, 'minZoom') ?? ''
+  const maxMapZoom = scene.getFlag(MODULE_ID, 'maxZoom') ?? ''
+  const placeholderMin = getSetting('min-zoom-override')
+  const placeholderMax = getSetting('max-zoom-override')
+
+  let injectedHtml = `<div class="form-group zoom-pan-options-scene">
+		<label>${localizeUi('scene-field-group-label', 'name')}</label>
+		<div class="form-fields">
+			<label for="flags.${MODULE_ID}.minZoom">${localizeUi('scene-min-field-label', 'name')}</label>
+			<input type="number" name="flags.${MODULE_ID}.minZoom" min=0.01 max=10 step=0.1 value="${minMapZoom}" placeholder="${placeholderMin}">
+			<label for="flags.${MODULE_ID}.maxZoom">${localizeUi('scene-max-field-label', 'name')}</label>
+			<input type="number" name="flags.${MODULE_ID}.maxZoom" min=1 max=10 step=1 value="${maxMapZoom}" placeholder="${placeholderMax}">
+		</div>
+		<p class="notes">${localizeUi('scene-field-group-label', 'hint')}</p>
+	</div>`
+  injectedHtml = $(injectedHtml)
+  const injectPoint = $(html[0].querySelector('form div[data-tab="basic"] div.initial-position'))
+
+  injectPoint.after(injectedHtml)
+  // warning: hacky code
+  // increase height by the height of the injected html (a bit hacky), because the "auto" doesn't work by this point
+  const injectedElement = html[0].querySelector('.zoom-pan-options-scene')
+  const addedHeight = injectedElement.offsetHeight + 2
+  const addedWidth = 6
+  html[0].style.height = (html[0].offsetHeight + addedHeight) + 'px'
+  html[0].style.width = (html[0].offsetWidth + addedWidth) + 'px'
+  // (this weird width thing is needed because when the application window is not tall enough an extra scrollbar appears
+  // which causes one line's word to wrap down which messes up the height calculation)
+  // (maybe foundry will fix it one day)
 }
 
 const avoidLockViewIncompatibility = () => {
@@ -477,7 +521,7 @@ Hooks.on('init', function () {
   })
   // migrating away from this...
   game.settings.register(MODULE_ID, 'min-max-zoom-override', {
-    name: "OLD min-max-zoom-override",
+    name: 'OLD min-max-zoom-override',
     scope: 'client',
     config: false,
     type: Number,
@@ -488,25 +532,25 @@ Hooks.on('init', function () {
     hint: localizeSetting('max-zoom-override', 'hint'),
     scope: 'client',
     config: true,
-    default: CONFIG.Canvas.maxZoom, // 3.0 is the default
+    default: 3,
     type: Number,
-    onChange: value => {
-      CONFIG.Canvas.maxZoom = value
-    },
   })
   game.settings.register(MODULE_ID, 'min-zoom-override', {
     name: localizeSetting('min-zoom-override', 'name'),
     hint: localizeSetting('min-zoom-override', 'hint'),
     scope: 'client',
     config: true,
-    default: (1 / CONFIG.Canvas.maxZoom), // 0.333 is the default
+    default: 1 / 3,
     type: Number,
   })
   // migration (will be removed in a year or so)
-  if (game.settings.get(MODULE_ID, 'min-max-zoom-override') !== undefined) {
+  if (game.settings.get(MODULE_ID, 'min-max-zoom-override') !== null) {
+    console.log('Zoom/Pan Options |', 'migrating min-max-zoom-override to max-zoom-override and min-zoom-override')
+    console.log('Zoom/Pan Options |',
+      `old setting value was: ${game.settings.get(MODULE_ID, 'min-max-zoom-override')}}`)
     game.settings.set(MODULE_ID, 'max-zoom-override', game.settings.get(MODULE_ID, 'min-max-zoom-override'))
     game.settings.set(MODULE_ID, 'min-zoom-override', 1 / game.settings.get(MODULE_ID, 'min-max-zoom-override'))
-    game.settings.set(MODULE_ID, 'min-max-zoom-override', undefined)
+    game.settings.set(MODULE_ID, 'min-max-zoom-override', null)
   }
   game.settings.register(MODULE_ID, 'drag-resistance-mode', {
     name: localizeSetting('drag-resistance-mode', 'name'),
@@ -630,10 +674,18 @@ Hooks.once('setup', function () {
     MODULE_ID,
     'Canvas.prototype._onDragCanvasPan',
     _onDragCanvasPan_override,
-    'OVERRIDE', // (same as above)
+    'OVERRIDE',
+  )
+  libWrapper.register(
+    MODULE_ID,
+    'AdaptiveFXAAFilter.prototype._computeLumaReduction',
+    _computeLumaReduction_override,
+    'OVERRIDE',
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
-  CONFIG.Canvas.maxZoom = getSetting('min-max-zoom-override')
+  // Canvas.maxZoom is bounded lower inside the libwrapped function, but setting it this high ensures core foundry code
+  // doesn't over-constrain it
+  CONFIG.Canvas.maxZoom = 999
   console.log('Done setting up Zoom/Pan Options.')
 })
 
@@ -645,3 +697,4 @@ Hooks.on('canvasReady', () => {
 Hooks.once('canvasReady', () => {
   Hooks.on('canvasPan', updateDragResistance)
 })
+Hooks.on('renderSceneConfig', addZoomSettingsToSceneConfig)
