@@ -150,12 +150,13 @@ function zoom (event) {
 
   const scale = scaleChangeRatio * canvas.stage.scale.x  // scale x and scale y are the same
   const d = canvas.dimensions
-  const max = CONFIG.Canvas.maxZoom
-  const min = 1 / Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max)
+  const max = getSetting('min-max-zoom-override')
+  const invMin = getSetting('min-zoom-override')
+  const min = 1 / Math.max(d.width / window.innerWidth, d.height / window.innerHeight, invMin)
 
   if (scale > max || scale < min) {
-    canvas.pan({ scale: scale > max ? max : min })
-    console.log('Zoom/Pan Options |', `scale limit reached (${scale}).`)
+    console.log('Zoom/Pan Options |', `scale exceeds limit (${scale}), bounding to interval [${min}, ${max}).`)
+    canvas.pan({ scale: scale > max ? max : scale < min ? min : scale })
     return
   }
 
@@ -474,9 +475,17 @@ Hooks.on('init', function () {
     type: Boolean,
     onChange: disableMiddleMouseScrollIfMiddleMousePanIsActive,
   })
+  // migrating away from this...
   game.settings.register(MODULE_ID, 'min-max-zoom-override', {
-    name: localizeSetting('min-max-zoom-override', 'name'),
-    hint: localizeSetting('min-max-zoom-override', 'hint'),
+    name: "OLD min-max-zoom-override",
+    scope: 'client',
+    config: false,
+    type: Number,
+  })
+  // ...to these two:
+  game.settings.register(MODULE_ID, 'max-zoom-override', {
+    name: localizeSetting('max-zoom-override', 'name'),
+    hint: localizeSetting('max-zoom-override', 'hint'),
     scope: 'client',
     config: true,
     default: CONFIG.Canvas.maxZoom, // 3.0 is the default
@@ -485,6 +494,20 @@ Hooks.on('init', function () {
       CONFIG.Canvas.maxZoom = value
     },
   })
+  game.settings.register(MODULE_ID, 'min-zoom-override', {
+    name: localizeSetting('min-zoom-override', 'name'),
+    hint: localizeSetting('min-zoom-override', 'hint'),
+    scope: 'client',
+    config: true,
+    default: (1 / CONFIG.Canvas.maxZoom), // 0.333 is the default
+    type: Number,
+  })
+  // migration (will be removed in a year or so)
+  if (game.settings.get(MODULE_ID, 'min-max-zoom-override') !== undefined) {
+    game.settings.set(MODULE_ID, 'max-zoom-override', game.settings.get(MODULE_ID, 'min-max-zoom-override'))
+    game.settings.set(MODULE_ID, 'min-zoom-override', 1 / game.settings.get(MODULE_ID, 'min-max-zoom-override'))
+    game.settings.set(MODULE_ID, 'min-max-zoom-override', undefined)
+  }
   game.settings.register(MODULE_ID, 'drag-resistance-mode', {
     name: localizeSetting('drag-resistance-mode', 'name'),
     hint: localizeSetting('drag-resistance-mode', 'hint'),
