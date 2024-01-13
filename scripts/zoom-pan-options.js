@@ -150,8 +150,8 @@ function zoom (event) {
 
   const scale = scaleChangeRatio * canvas.stage.scale.x;  // scale x and scale y are the same
   const d = canvas.dimensions;
-  const max = CONFIG.Canvas.maxZoom;
-  const min = Math.max((1 / Math.max(d.width / window.innerWidth, d.height / window.innerHeight)), CONFIG.Canvas.minZoom);
+  const max = canvas.scene.getFlag(MODULE_ID, 'maxZoom') || CONFIG.Canvas.maxZoom;
+  const min = Math.max((1 / Math.max(d.width / window.innerWidth, d.height / window.innerHeight)), (canvas.scene.getFlag(MODULE_ID, 'minZoom') || CONFIG.Canvas.minZoom));
 
   if (scale > max || scale < min) {
     canvas.pan({ scale: scale > max ? max : min });
@@ -636,3 +636,21 @@ Hooks.on('canvasReady', () => {
 Hooks.once('canvasReady', () => {
   Hooks.on('canvasPan', updateDragResistance);
 });
+Hooks.on("renderSceneConfig", (app, html, data) => {
+	const maxMapZoom = app.object.getFlag(MODULE_ID, 'maxZoom') || "";
+	const minMapZoom = app.object.getFlag(MODULE_ID, 'minZoom') || "";
+	let injectHtml = `<div class="form-group">
+		<label>${game.i18n.localize(MODULE_ID + '.ui.scene-field-group-label.name')}</label>
+		<div class="form-fields">
+			<label for="flags.${MODULE_ID}.maxZoom">${game.i18n.localize(MODULE_ID + '.ui.scene-max-field-label.name')}</label>
+			<input type="number" name="flags.${MODULE_ID}.maxZoom" min=0 max=10 step=1 value="${maxMapZoom}" placeholder="${CONFIG.Canvas.maxZoom}">
+			<label for="flags.${MODULE_ID}.minZoom">${game.i18n.localize(MODULE_ID + '.ui.scene-min-field-label.name')}</label>
+			<input type="number" name="flags.${MODULE_ID}.minZoom" min=0 max=10 step=0.1 value="${minMapZoom}" placeholder="${CONFIG.Canvas.minZoom}">
+		</div>
+		<p class="notes">${game.i18n.localize(MODULE_ID + '.ui.scene-field-group-label.hint')}</p>
+	</div>`;
+	injectHtml = $(injectHtml);
+	const injectPoint = $(html[0].querySelector('form div[data-tab="basic"] div.initial-position'));
+	injectPoint.after(injectHtml);
+});
+

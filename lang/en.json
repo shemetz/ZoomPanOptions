@@ -68,6 +68,18 @@
         "Touchpad": "Zoom/Pan Options: Touchscreen mode enabled.",
         "Alternative": "Zoom/Pan Options: Alternative mode enabled."
       }
-    }
+    },
+	"ui": {
+		"scene-field-group-label": {
+			"name": "Map Zoom Overrides",
+			"hint": "Set override values for max/min zoom on this scene."
+		},
+		"scene-max-field-label": {
+			"name": "Max"
+		},
+		"scene-min-field-label": {
+			"name": "Min"
+		}
+	}
   }
 }
