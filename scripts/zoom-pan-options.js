@@ -544,7 +544,13 @@ Hooks.on('init', function () {
     type: Number,
   })
   // migration (will be removed in a year or so)
-  if (game.settings.get(MODULE_ID, 'min-max-zoom-override') !== null) {
+  let oldMinMaxZoomOverride = null;
+  try {
+    oldMinMaxZoomOverride = game.settings.get(MODULE_ID, 'min-max-zoom-override')
+  } catch (ex) {
+    // Throws an error accessing unregistered setting in v12+
+  }
+  if (oldMinMaxZoomOverride !== null) {
     console.log('Zoom/Pan Options |', 'migrating min-max-zoom-override to max-zoom-override and min-zoom-override')
     console.log('Zoom/Pan Options |',
       `old setting value was: ${game.settings.get(MODULE_ID, 'min-max-zoom-override')}}`)
