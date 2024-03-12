@@ -525,6 +525,7 @@ Hooks.on('init', function () {
     scope: 'client',
     config: false,
     type: Number,
+    default: null,
   })
   // ...to these two:
   game.settings.register(MODULE_ID, 'max-zoom-override', {
