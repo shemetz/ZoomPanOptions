@@ -236,19 +236,22 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
 
   const mim_activateDragEvents = () => {
     mim_deactivateDragEvents()
-    mim.layer.on('pointermove', mim_handleMouseMove)
+    mim.layer.on('pointermove', mim_handlePointerMove)
     //if ( !mim._dragRight ) {
     //  canvas.app.view.addEventListener("contextmenu", mim.#handlers.contextmenu, {capture: true});
     //}
   }
 
   const mim_deactivateDragEvents = () => {
-    mim.layer.off('pointermove', mim_handleMouseMove)
+    mim.layer.off('pointermove', mim_handlePointerMove)
     //canvas.app.view.removeEventListener("contextmenu", mim.#handlers.contextmenu, {capture: true});
   }
 
-  const mim_handleMouseMove = (event) => {
-    if (![mim.states.CLICKED, mim.states.DRAG].includes(mim.state)) return
+  /**
+   * based on #handlePointerMove code
+   */
+  const mim_handlePointerMove = (event) => {
+    if (!mim.state.between(mim.states.GRABBED, mim.states.DRAG)) return
 
     // Limit dragging to 60 updates per second
     const now = Date.now()
@@ -259,8 +262,12 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
     const data = mim.interactionData
     data.destination = event.getLocalPosition(mim.layer)
 
+    // Handling rare case when origin is not defined
+    // FIXME: The root cause should be identified and this code removed
+    if (data.origin === undefined) data.origin = new PIXI.Point().copyFrom(data.destination)
+
     // Begin a new drag event
-    if (mim.state === mim.states.CLICKED) {
+    if (mim.state !== mim.states.DRAG) {
       const dx = data.destination.x - data.origin.x
       const dy = data.destination.y - data.origin.y
       const dz = Math.hypot(dx, dy)
@@ -271,7 +278,7 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
     }
 
     // Continue a drag event
-    else return mim_handleDragMove(event)
+    if (mim.state === mim.states.DRAG) mim_handleDragMove(event)
   }
 
   const mim_handleDragStart = (event) => {
