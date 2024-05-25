@@ -2,10 +2,10 @@
   "id": "zoom-pan-options",
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "compatibility": {
-    "minimum": "11",
-    "verified": "11"
+    "minimum": "12",
+    "verified": "12"
   },
   "esmodules": [
     "scripts/zoom-pan-options.js"
@@ -33,7 +33,7 @@
         "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
         "compatibility": {
           "minimum": "1.12.7.0",
-          "verified": "1.12.13.0"
+          "verified": "1.12.13.1"
         }
       }
     ]
