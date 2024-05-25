@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.14.0] - 2024-05-25
+## [1.14.1] - 2024-05-25
 - Fixed compatibility with Foundry V12 (#60)
 - Improved drag resistance consistency, which means pinging and panning while the cursor is over a token will be easier
 
@@ -126,5 +126,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.11.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.10.0...1.11.0
 [1.12.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.11.0...1.12.0
 [1.13.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.12.0...1.13.0
-[1.14.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.13.0...1.14.0
-[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.14.0...HEAD
+[1.14.1]: https://github.com/shemetz/ZoomPanOptions/compare/1.13.0...1.14.1
+[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.14.1...HEAD
