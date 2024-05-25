@@ -423,16 +423,6 @@ function _onDragCanvasPan_override (event) {
   if (dx || dy) return this.animatePan({ x: this.stage.pivot.x + dx, y: this.stage.pivot.y + dy, duration: 200 })
 }
 
-/**
- * Changes from original function:
- * `max` value is based on settings, rather than being based on CONFIG.maxZoom, which this module changes.
- */
-function _computeLumaReduction_override () {
-  const max = canvas.scene.getFlag(MODULE_ID, 'maxZoom') ?? getSetting('max-zoom-override')
-  const zoom = canvas.stage.worldTransform.d / max
-  return Math.mix(0.6, 0.02, zoom)
-}
-
 const updateDragResistance = () => {
   const setting = getSetting('drag-resistance-mode')
   if (setting === 'Foundry Default') {
@@ -675,12 +665,6 @@ Hooks.once('setup', function () {
     MODULE_ID,
     'Canvas.prototype._onDragCanvasPan',
     _onDragCanvasPan_override,
-    'OVERRIDE',
-  )
-  libWrapper.register(
-    MODULE_ID,
-    'AdaptiveFXAAFilter.prototype._computeLumaReduction',
-    _computeLumaReduction_override,
     'OVERRIDE',
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
