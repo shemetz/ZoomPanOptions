@@ -58,7 +58,7 @@ function isTouchpad (event) {
 /**
  * (note: return value is meaningless here)
  */
-function _onWheel_Override (event) {
+function _onWheel_override (event) {
   let mode
   const shift = event.shiftKey
   const alt = event.altKey
@@ -430,17 +430,37 @@ function _onDragCanvasPan_override (event) {
   if (dx || dy) return this.animatePan({ x: this.stage.pivot.x + dx, y: this.stage.pivot.y + dy, duration: 200 })
 }
 
-const updateDragResistance = () => {
+function _createInteractionManager_wrapper (wrapped, ...args) {
+  const mim = wrapped(...args)
+  Object.defineProperty(mim.options, 'dragResistance', {
+    set: function (value) {
+      console.error(MODULE_ID,
+        'dragResistance was patched to be a read-only dynamic value, you can\'t set it! (report this as a module bug)')
+    },
+    get: function () {
+      return betterDragResistance()
+    },
+    enumerable: true,
+  })
+  mim.options.dragResistance = betterDragResistance()
+  return mim
+}
+
+const betterDragResistance = () => {
   const setting = getSetting('drag-resistance-mode')
   if (setting === 'Foundry Default') {
-    canvas.mouseInteractionManager.options.dragResistance = undefined
+    return undefined
   } else if (setting === 'Responsive') {
-    canvas.mouseInteractionManager.options.dragResistance = 0.1
+    return 0.1
   } else if (setting === 'Scaling') {
     const scale = canvas.stage.scale.x
     const multiplier = 20 // feels like about 1% of width
-    canvas.mouseInteractionManager.options.dragResistance = multiplier / scale
+    return multiplier / scale
   }
+}
+
+const updateCanvasDragResistance = () => {
+  canvas.mouseInteractionManager.options.dragResistance = betterDragResistance()
 }
 
 const addZoomSettingsToSceneConfig = (sceneConfig, html) => {
@@ -562,7 +582,7 @@ Hooks.on('init', function () {
       'Scaling': localizeSetting('drag-resistance-mode', 'choice_scaling'),
     },
     default: 'Scaling',
-    onChange: updateDragResistance,
+    onChange: updateCanvasDragResistance,
   })
   game.settings.register(MODULE_ID, 'pan-zoom-mode', {
     name: localizeSetting('pan-zoom-mode', 'name'),
@@ -664,7 +684,7 @@ Hooks.once('setup', function () {
     MODULE_ID,
     'MouseManager.prototype._onWheel',
     (event) => {
-      return _onWheel_Override(event)
+      return _onWheel_override(event)
     },
     'OVERRIDE',
   )
@@ -673,6 +693,12 @@ Hooks.once('setup', function () {
     'Canvas.prototype._onDragCanvasPan',
     _onDragCanvasPan_override,
     'OVERRIDE',
+  )
+  libWrapper.register(
+    MODULE_ID,
+    'PlaceableObject.prototype._createInteractionManager',
+    _createInteractionManager_wrapper,
+    'WRAPPER',
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   // Canvas.maxZoom is bounded lower inside the libwrapped function, but setting it this high ensures core foundry code
@@ -684,9 +710,9 @@ Hooks.once('setup', function () {
 Hooks.on('canvasReady', () => {
   canvas.stage.on('mousedown', handleMouseDown_forMiddleClickDrag)
   canvas.stage.on('mouseup', handleMouseUp_forMiddleClickDrag)  // technically this isn't necessary, based on testing
-  updateDragResistance()
+  updateCanvasDragResistance()
 })
 Hooks.once('canvasReady', () => {
-  Hooks.on('canvasPan', updateDragResistance)
+  Hooks.on('canvasPan', updateCanvasDragResistance)
 })
 Hooks.on('renderSceneConfig', addZoomSettingsToSceneConfig)
