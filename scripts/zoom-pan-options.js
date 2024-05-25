@@ -433,7 +433,7 @@ function _onDragCanvasPan_override (event) {
 function _createInteractionManager_wrapper (wrapped, ...args) {
   const mim = wrapped(...args)
   Object.defineProperty(mim.options, 'dragResistance', {
-    set: function (value) {
+    set: function (_value) {
       console.error(MODULE_ID,
         'dragResistance was patched to be a read-only dynamic value, you can\'t set it! (report this as a module bug)')
     },
@@ -442,7 +442,6 @@ function _createInteractionManager_wrapper (wrapped, ...args) {
     },
     enumerable: true,
   })
-  mim.options.dragResistance = betterDragResistance()
   return mim
 }
 
