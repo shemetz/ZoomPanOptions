@@ -199,22 +199,33 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
   if (!getSetting('middle-mouse-pan')) return true
   if (mouseDownEvent.data.originalEvent.button !== 1) return true // buttons other than middle click - ignoring
   const mim = canvas.mouseInteractionManager
-  // Copying (and mildly altering) code from MouseInteractionManager functions. mostly replacing references
+
+  /*
+   * --- This section is awkward ---
+   *
+   * I'm copying a lot of code from MouseInteractionManager functions, and:
+   * - replacing `this` with `mim`
+   * - replacing `this.#function` with `mim_function`
+   * - commenting out code that is not necessary for the "pretend middle-click-drag is right-click-drag" thing
+   */
 
   const mim_handleRightDown = (event) => {
-    if (![mim.states.HOVER, mim.states.CLICKED, mim.states.DRAG].includes(mim.state)) return
-    //if ( event.button !== 2 ) return; // Only support standard left-click
+    if (!mim.state.between(mim.states.HOVER, mim.states.DRAG)) return
 
-    // Determine double vs single click
-    //const isDouble = (now - mim.rcTime) <= 250;
-    mim.rcTime = Date.now()
+    //// Determine double vs single click
+    //const isDouble = ((event.timeStamp - mim.rcTime) <= MouseInteractionManager.DOUBLE_CLICK_TIME_MS)
+    //  && (Math.hypot(event.clientX - mim.lastClick.x, event.clientY - mim.lastClick.y)
+    //    <= MouseInteractionManager.DOUBLE_CLICK_DISTANCE_PX);
+    //mim.rcTime = isDouble ? 0 : event.timeStamp;
+    mim.rcTime = event.timeStamp
+    mim.lastClick.set(event.clientX, event.clientY)
 
     // Update event data
     mim.interactionData.origin = event.getLocalPosition(mim.layer)
 
-    // Dispatch to double and single-click handlers
-    //if ( isDouble && mim.can("clickRight2", event) ) return mim.#handleClickRight2(event);
-    //else
+    //// Dispatch to double and single-click handlers
+    //if ( isDouble && mim.can("clickRight2", event) ) return mim_handleClickRight2(event);
+    //else return mim_handleClickRight(event);
     return mim_handleClickRight(event)
   }
 
@@ -225,32 +236,40 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
     mim._dragRight = true
 
     //// Was the right-click event handled by the callback?
-    //if ( mim.callback(action, event) === false ) return mim.#debug(action, event, mim.handlerOutcomes.REFUSED);
-
-    // Upgrade the workflow state and activate drag event handlers
+    //const priorState = mim.state;
     if (mim.state === mim.states.HOVER) mim.state = mim.states.CLICKED
     canvas.currentMouseManager = mim
-    if ((mim.state < mim.states.DRAG) && mim.can('dragRight', event)) mim_activateDragEvents()
-    //return mim.#debug(action, event);
+    //if ( mim.callback(action, event) === false ) {
+    //  mim.state = priorState;
+    //  canvas.currentMouseManager = null;
+    //  return mim_debug(action, event, mim.handlerOutcomes.REFUSED);
+    //}
+
+    // Activate drag event handlers
+    if ((mim.state === mim.states.CLICKED) && mim.can('dragRight', event)) {
+      mim.state = mim.states.GRABBED
+      mim_activateDragEvents()
+    }
+    //return mim_debug(action, event);
   }
 
   const mim_activateDragEvents = () => {
     mim_deactivateDragEvents()
-    mim.layer.on('pointermove', mim_handlePointerMove)
+    mim.layer.on('pointermove', mim_handlers_pointermove)
     //if ( !mim._dragRight ) {
     //  canvas.app.view.addEventListener("contextmenu", mim.#handlers.contextmenu, {capture: true});
     //}
   }
 
   const mim_deactivateDragEvents = () => {
-    mim.layer.off('pointermove', mim_handlePointerMove)
+    mim.layer.off('pointermove', mim_handlers_pointermove)
     //canvas.app.view.removeEventListener("contextmenu", mim.#handlers.contextmenu, {capture: true});
   }
 
   /**
    * based on #handlePointerMove code
    */
-  const mim_handlePointerMove = (event) => {
+  const mim_handlers_pointermove = (event) => {
     if (!mim.state.between(mim.states.GRABBED, mim.states.DRAG)) return
 
     // Limit dragging to 60 updates per second
@@ -284,11 +303,17 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
   const mim_handleDragStart = (event) => {
     clearTimeout(mim.constructor.longPressTimeout)
     const action = mim._dragRight ? 'dragRightStart' : 'dragLeftStart'
-    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
-    if (!mim.can(action, event)) return
-    const handled = mim.callback(action, event)
-    if (handled) mim.state = mim.states.DRAG
-    //return mim.#debug(action, event, handled ? mim.handlerOutcomes.ACCEPTED : mim.handlerOutcomes.REFUSED);
+    if (!mim.can(action, event)) {
+      //mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
+      mim.cancel(event)
+      return
+    }
+    mim.state = mim.states.DRAG
+    if (mim.callback(action, event) === false) {
+      mim.state = mim.states.GRABBED
+      //return mim.#debug(action, event, mim.handlerOutcomes.REFUSED);
+    }
+    //return mim.#debug(action, event, mim.handlerOutcomes.ACCEPTED);
   }
 
   const mim_handleDragMove = (event) => {
@@ -296,8 +321,8 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
     const action = mim._dragRight ? 'dragRightMove' : 'dragLeftMove'
     //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
     if (!mim.can(action, event)) return
-    const handled = mim.callback(action, event)
-    if (handled) mim.state = mim.states.DRAG
+    //const handled = mim.callback(action, event);
+    mim.callback(action, event)
     //return mim.#debug(action, event, handled ? mim.handlerOutcomes.ACCEPTED : mim.handlerOutcomes.REFUSED);
   }
 
