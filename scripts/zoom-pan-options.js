@@ -508,16 +508,9 @@ const addZoomSettingsToSceneConfig = (sceneConfig, html) => {
   const injectPoint = $(html[0].querySelector('form div[data-tab="basic"] div.initial-position'))
 
   injectPoint.after(injectedHtml)
-  // warning: hacky code
-  // increase height by the height of the injected html (a bit hacky), because the "auto" doesn't work by this point
-  const injectedElement = html[0].querySelector('.zoom-pan-options-scene')
-  const addedHeight = injectedElement.offsetHeight + 2
-  const addedWidth = 6
-  html[0].style.height = (html[0].offsetHeight + addedHeight) + 'px'
-  html[0].style.width = (html[0].offsetWidth + addedWidth) + 'px'
-  // (this weird width thing is needed because when the application window is not tall enough an extra scrollbar appears
-  // which causes one line's word to wrap down which messes up the height calculation)
-  // (maybe foundry will fix it one day)
+
+  // refresh window height to avoid having a scrollbar that hides the extra div
+  sceneConfig.setPosition()
 }
 
 const avoidLockViewIncompatibility = () => {
