@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.3] - 2024-06-21
+- Fix scene config window height bug (#62)
+
 ## [1.14.2] - 2024-06-20
 - Fixed mid-click pan bug in v12 (#61)
 
@@ -131,4 +134,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.13.0]: https://github.com/shemetz/ZoomPanOptions/compare/1.12.0...1.13.0
 [1.14.1]: https://github.com/shemetz/ZoomPanOptions/compare/1.13.0...1.14.1
 [1.14.2]: https://github.com/shemetz/ZoomPanOptions/compare/1.14.1...1.14.2
-[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.14.2...HEAD
+[1.14.2]: https://github.com/shemetz/ZoomPanOptions/compare/1.14.2...1.14.3
+[Unreleased]: https://github.com/shemetz/ZoomPanOptions/compare/1.14.3...HEAD
