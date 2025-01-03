@@ -1,3 +1,6 @@
+## 1.14.4 - 2025-01-03
+- Improved github workflow automation
+
 ## 1.14.3 - 2024-06-21
 - Fix scene config window height bug (#62)
 
