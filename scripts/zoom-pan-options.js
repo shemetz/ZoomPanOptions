@@ -56,9 +56,24 @@ function isTouchpad (event) {
 }
 
 /**
- * (note: return value is meaningless here)
+ * In foundry V13, MouseManager.#onWheel is #private so we can't override it directly :(
+ * But the way it works is basically:
+ *
+ *   event.preventDefault();
+ *   // Take no actions if the canvas is not hovered
+ *   if (not hovering over canvas#board) return
+ *   // Case 1 - active Ruler
+ *   if (ruler.active && (ctrl || shift)) return ruler._onMouseWheel(event)
+ *   // Case 2 - active Token Ruler
+ *   if (draggedToken && (ctrl || shift)) return draggedToken._onMouseWheel(event)
+ *   // Case 3 - rotate placeable objects
+ *   if ((activeLayer.controlled.length) && (ctrl || shift)) return activeLayer._onMouseWheel(event)
+ *   // Case 4 - zoom the canvas
+ *   return canvas._onMouseWheel(event)
+ *
+ * So in V13+, ZoomPanOptions will override canvas._onMouseWheel, and will no longer handle cases 1-3 above.
  */
-function _onWheel_override (event) {
+const canvas_onMouseWheel_override = (event) => {
   let mode
   const shift = event.shiftKey
   const alt = event.altKey
@@ -78,20 +93,9 @@ function _onWheel_override (event) {
     mode = getSetting('pan-zoom-mode')
   }
 
-  // Prevent zooming the entire browser window
-  if (ctrlOrMeta) {
-    event.preventDefault()
-  }
-
-  // Take no actions if the canvas is not hovered
-  if (!canvas?.ready) return
-  const hover = document.elementFromPoint(event.clientX, event.clientY)
-  if (!hover || (hover.id !== 'board')) return
-  event.preventDefault()
-
   const layer = canvas.activeLayer
 
-  // Case 1 - rotate stuff
+  // Case 4.1 - rotate stuff
   const deltaY = event.wheelDelta !== undefined ? -event.wheelDelta
     // wheelDelta is undefined in firefox
     : event.deltaY
@@ -112,7 +116,7 @@ function _onWheel_override (event) {
     })
   }
 
-  // Case 2 - zoom the canvas
+  // Case 4.2 - zoom the canvas
   // (written to be readable)
   if (
     mode === 'Mouse'
@@ -122,7 +126,7 @@ function _onWheel_override (event) {
     return zoom(event)
   }
 
-  // Cast 3 - pan the canvas horizontally (shift+scroll)
+  // Cast 4.3 - pan the canvas horizontally (shift+scroll)
   if (mode === 'Alternative' && shift) {
     // noinspection JSSuspiciousNameCombination
     return panWithMultiplier({
@@ -130,7 +134,7 @@ function _onWheel_override (event) {
     })
   }
 
-  // Case 4 - pan the canvas in the direction of the mouse/touchpad event
+  // Case 4.4 - pan the canvas in the direction of the mouse/touchpad event
   panWithMultiplier(event)
 }
 
@@ -516,7 +520,7 @@ const addZoomSettingsToSceneConfig = (sceneConfig, html) => {
 const avoidLockViewIncompatibility = () => {
   Hooks.on('libWrapper.ConflictDetected', (p1, p2, target, frozenNames) => {
     if ((p1 === MODULE_ID && p2 === 'LockView') || p2 === MODULE_ID && p1 === 'LockView') {
-      if (frozenNames.includes('Canvas.prototype._onDragCanvasPan')) {
+      if (frozenNames.includes('foundry.canvas.Canvas.prototype._onDragCanvasPan')) {
         if (!game.user.isGM) {
           if (!getSetting('disable-lock-view-compatibility-fix')) {
             isConflictingWithLockView = true
@@ -699,21 +703,21 @@ Hooks.on('init', function () {
 Hooks.once('setup', function () {
   libWrapper.register(
     MODULE_ID,
-    'MouseManager.prototype._onWheel',
+    'foundry.canvas.Canvas.prototype._onMouseWheel',
     (event) => {
-      return _onWheel_override(event)
+      return canvas_onMouseWheel_override(event)
     },
     'OVERRIDE',
   )
   libWrapper.register(
     MODULE_ID,
-    'Canvas.prototype._onDragCanvasPan',
+    'foundry.canvas.Canvas.prototype._onDragCanvasPan',
     _onDragCanvasPan_override,
     'OVERRIDE',
   )
   libWrapper.register(
     MODULE_ID,
-    'PlaceableObject.prototype._createInteractionManager',
+    'foundry.canvas.placeables.PlaceableObject.prototype._createInteractionManager',
     _createInteractionManager_wrapper,
     'WRAPPER',
   )
@@ -721,6 +725,7 @@ Hooks.once('setup', function () {
   // Canvas.maxZoom is bounded lower inside the libwrapped function, but setting it this high ensures core foundry code
   // doesn't over-constrain it
   CONFIG.Canvas.maxZoom = 999
+  CONFIG.Canvas.minZoom = 1 / 999 // TODO minZoom will probably be available in V13 testing 4 or later
   console.log('Done setting up Zoom/Pan Options.')
 })
 

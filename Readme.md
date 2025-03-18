@@ -9,6 +9,8 @@ FoundryVTT module to change zooming and panning through the mouse or a touchpad.
 
 To install, browse for it in the module browser, or [directly copy the manifest link for the latest release](https://github.com/shemetz/ZoomPanOptions/releases/latest/download/module.json).
 
+**If you're a touchscreen user, I recommend using [TouchVTT](https://github.com/Oromis/touch-vtt) instead of this module.**
+
 # Features
 
 ## Zoom around cursor
@@ -22,7 +24,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 ## Minimum/Maximum Zoom Override
 - Override for the minimum and maximum zoom scale limits. 3 is the Foundry default - you can't zoom in to get a bigger than a x3 scale closeup, or zoom out to get a smaller than a x0.3 "wide shot" of the scene. For example, if you change this to 6, you'll be able to zoom in twice as close and zoom out twice as far.  A value of 10 is usually enough to fill the screen with a single token or with the entire scene
 
-## Drag resistance mode
+## Drag resistance mode - TODO remove in v13
 ### Foundry Default
 - This is the minimum distance you need to move your cursor for a mouse drag event to be triggered.
   When it's too high you'll feel a dead zone when making small mouse drags (e.g. short pans, small drawings).
