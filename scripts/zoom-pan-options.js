@@ -157,8 +157,8 @@ function zoom (event) {
   }
 
   const scale = scaleChangeRatio * canvas.stage.scale.x  // scale x and scale y are the same
-  const max = canvas.scene.getFlag(MODULE_ID, 'maxZoom') ?? getSetting('max-zoom-override')
-  const min = canvas.scene.getFlag(MODULE_ID, 'minZoom') ?? getSetting('min-zoom-override')
+  const max = Math.max(canvas.scene.initial.scale, getSetting('max-zoom-override'))
+  const min = Math.min(canvas.scene.initial.scale, getSetting('min-zoom-override'))
   if (scale > max || scale < min) {
     console.log('Zoom/Pan Options |', `scale exceeds limit (${scale}), bounding to interval [${min}, ${max}).`)
     canvas.pan({ scale: scale > max ? max : scale < min ? min : scale })
@@ -483,32 +483,6 @@ function _onDragCanvasPan_override (event) {
   if (dx || dy) return this.animatePan({ x: this.stage.pivot.x + dx, y: this.stage.pivot.y + dy, duration: 200 })
 }
 
-const addZoomSettingsToSceneConfig = (sceneConfig, html) => {
-  const scene = sceneConfig.object
-  const minMapZoom = scene.getFlag(MODULE_ID, 'minZoom') ?? ''
-  const maxMapZoom = scene.getFlag(MODULE_ID, 'maxZoom') ?? ''
-  const placeholderMin = getSetting('min-zoom-override')
-  const placeholderMax = getSetting('max-zoom-override')
-
-  let injectedHtml = `<div class="form-group zoom-pan-options-scene">
-		<label>${localizeUi('scene-field-group-label', 'name')}</label>
-		<div class="form-fields">
-			<label for="flags.${MODULE_ID}.minZoom">${localizeUi('scene-min-field-label', 'name')}</label>
-			<input type="number" name="flags.${MODULE_ID}.minZoom" min=0.01 max=10 step=0.1 value="${minMapZoom}" placeholder="${placeholderMin}">
-			<label for="flags.${MODULE_ID}.maxZoom">${localizeUi('scene-max-field-label', 'name')}</label>
-			<input type="number" name="flags.${MODULE_ID}.maxZoom" min=1 max=10 step=1 value="${maxMapZoom}" placeholder="${placeholderMax}">
-		</div>
-		<p class="notes">${localizeUi('scene-field-group-label', 'hint')}</p>
-	</div>`
-  injectedHtml = $(injectedHtml)
-  const injectPoint = $(html[0].querySelector('form div[data-tab="basic"] div.initial-position'))
-
-  injectPoint.after(injectedHtml)
-
-  // refresh window height to avoid having a scrollbar that hides the extra div
-  sceneConfig.setPosition()
-}
-
 const avoidLockViewIncompatibility = () => {
   Hooks.on('libWrapper.ConflictDetected', (p1, p2, target, frozenNames) => {
     if ((p1 === MODULE_ID && p2 === 'LockView') || p2 === MODULE_ID && p1 === 'LockView') {
@@ -574,15 +548,6 @@ Hooks.on('init', function () {
     default: 1 / 3,
     type: Number,
   })
-  // migration (will be removed in a year or so)
-  if (game.settings.get(MODULE_ID, 'min-max-zoom-override') !== null) {
-    console.log('Zoom/Pan Options |', 'migrating min-max-zoom-override to max-zoom-override and min-zoom-override')
-    console.log('Zoom/Pan Options |',
-      `old setting value was: ${game.settings.get(MODULE_ID, 'min-max-zoom-override')}}`)
-    game.settings.set(MODULE_ID, 'max-zoom-override', game.settings.get(MODULE_ID, 'min-max-zoom-override'))
-    game.settings.set(MODULE_ID, 'min-zoom-override', 1 / game.settings.get(MODULE_ID, 'min-max-zoom-override'))
-    game.settings.set(MODULE_ID, 'min-max-zoom-override', null)
-  }
   game.settings.register(MODULE_ID, 'pan-zoom-mode', {
     name: localizeSetting('pan-zoom-mode', 'name'),
     hint: localizeSetting('pan-zoom-mode', 'hint'),
@@ -696,6 +661,7 @@ Hooks.once('setup', function () {
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   // Canvas.maxZoom is bounded lower inside the libwrapped function, but setting it this high ensures core foundry code
   // doesn't over-constrain it
+  // (e.g. for initial scene zoom)
   CONFIG.Canvas.maxZoom = 999
   CONFIG.Canvas.minZoom = 1 / 999 // TODO minZoom will probably be available in V13 testing 4 or later
   console.log('Done setting up Zoom/Pan Options.')
@@ -705,4 +671,3 @@ Hooks.on('canvasReady', () => {
   canvas.stage.on('mousedown', handleMouseDown_forMiddleClickDrag)
   canvas.stage.on('mouseup', handleMouseUp_forMiddleClickDrag)  // technically this isn't necessary, based on testing
 })
-Hooks.on('renderSceneConfig', addZoomSettingsToSceneConfig)
