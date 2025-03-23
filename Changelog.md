@@ -1,3 +1,9 @@
+## 2.0.0 - 2025-03-23
+- Updated to Foundry V13+ compatibility (only)
+- Removed Drag Resistance override -- now core foundry has good drag resistance :)
+- Removed min/max zoom settings per scene, now they're just determined by your own settings plus the initial view scale
+- Refactored a lot of code to continue working in v13 and to stay up to date
+
 ## 1.14.4 - 2025-01-03
 - Improved github workflow automation
 
