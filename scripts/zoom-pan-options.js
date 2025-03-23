@@ -569,6 +569,14 @@ Hooks.on('init', function () {
     default: false,
     type: Boolean,
   })
+  game.settings.register(MODULE_ID, 'invert-vertical-scroll', {
+    name: localizeSetting('invert-vertical-scroll', 'name'),
+    hint: localizeSetting('invert-vertical-scroll', 'hint'),
+    scope: 'client',
+    config: true,
+    default: false,
+    type: Boolean,
+  })
   game.settings.register(MODULE_ID, 'zoom-speed-multiplier', {
     name: localizeSetting('zoom-speed-multiplier', 'name'),
     hint: localizeSetting('zoom-speed-multiplier', 'hint'),
@@ -584,14 +592,6 @@ Hooks.on('init', function () {
     config: true,
     default: 1,
     type: Number,
-  })
-  game.settings.register(MODULE_ID, 'invert-vertical-scroll', {
-    name: localizeSetting('invert-vertical-scroll', 'name'),
-    hint: localizeSetting('invert-vertical-scroll', 'hint'),
-    scope: 'client',
-    config: true,
-    default: false,
-    type: Boolean,
   })
   game.settings.register(MODULE_ID, 'pad-value-when-dragging', {
     name: localizeSetting('pad-value-when-dragging', 'name'),

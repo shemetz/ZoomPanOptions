@@ -23,6 +23,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 
 ## Minimum/Maximum Zoom Override
 - Override for the minimum and maximum zoom scale limits. 3 is the Foundry default - you can't zoom in to get a bigger than a x3 scale closeup, or zoom out to get a smaller than a x0.3 "wide shot" of the scene. For example, if you change this to 6, you'll be able to zoom in twice as close and zoom out twice as far.  A value of 10 is usually enough to fill the screen with a single token or with the entire scene
+- You can also set a scene's Initial View Position to be beyond normal zoom limits  
 
 ## Pan/Zoom Mode:
 ### "Mouse" mode
@@ -41,9 +42,12 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
 - (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
-## Auto-detect touchpad (BUGGY)
+### Auto-detect touchpad (BUGGY)
 - Will auto-detect touchpad movements (any "scroll" event that includes both vertical and horizontal components), and treat them as if the "Touchpad" or "Alternative" mode is active.
 - This feature is buggy, which is why it defaults to false.  If you can improve it with a PR, please do!
+
+## Invert vertical scroll
+- Only used in touchpad and alternative modes. If set to true, you will scroll up when dragging/scrolling down.
 
 ## Pan speed multiplier
 - Only used in touchpad and alternative modes. Multiplies pan speed. Defaults to 1, which should be close to the pan speed when right-click-dragging the canvas.
@@ -55,8 +59,8 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Set to 0.1 for slower zooming, or 10 for faster zooming.
 - Technically you can give this a negative value to flip your zoom directions, if you're an oddball. 
 
-## Invert vertical scroll
-- Only used in touchpad and alternative modes. If set to true, you will scroll up when dragging/scrolling down.
+## Pan padding overrides (pad value, shift value)
+- These are for advanced users who don't like the default panning behavior
 
 ## Keybindings
 - You can add keyboard shortcuts to manually toggle between Touchpad and Mouse, or Touchpad and Alternative, which should
