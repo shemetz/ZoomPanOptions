@@ -224,6 +224,9 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
     mim.rcTime = event.timeStamp
     mim.lastClick.set(event.clientX, event.clientY)
 
+    // Assign origin data
+    mim_assignOriginData(event)
+
     // Update event data
     mim.interactionData.origin = event.getLocalPosition(mim.layer)
 
@@ -235,8 +238,7 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
 
   const mim_handleClickRight = (event) => {
     const action = 'clickRight'
-    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
-    if (!mim.can(action, event)) return
+    if (!mim.can(action, event)) return mim_debug(action, event, mim.handlerOutcomes.DISALLOWED)
     mim._dragRight = true
 
     //// Was the right-click event handled by the callback?
@@ -283,21 +285,16 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
 
     // Update interaction data
     const data = mim.interactionData
-    data.destination = event.getLocalPosition(mim.layer)
-
-    // Handling rare case when origin is not defined
-    // FIXME: The root cause should be identified and this code removed
-    if (data.origin === undefined) data.origin = new PIXI.Point().copyFrom(data.destination)
+    data.destination = event.getLocalPosition(mim.layer, data.destination)
 
     // Begin a new drag event
     if (mim.state !== mim.states.DRAG) {
-      const dx = data.destination.x - data.origin.x
-      const dy = data.destination.y - data.origin.y
+      const dx = event.global.x - data.screenOrigin.x
+      const dy = event.global.y - data.screenOrigin.y
       const dz = Math.hypot(dx, dy)
-      const r = mim.options.dragResistance || (canvas.dimensions.size / 4)
-      if (dz >= r) {
-        return mim_handleDragStart(event)
-      }
+      const r = mim.options.dragResistance ||
+        foundry.canvas.interaction.MouseInteractionManager.DEFAULT_DRAG_RESISTANCE_PX
+      if (dz >= r) mim_handleDragStart(event)
     }
 
     // Continue a drag event
@@ -308,26 +305,44 @@ const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
     clearTimeout(mim.constructor.longPressTimeout)
     const action = mim._dragRight ? 'dragRightStart' : 'dragLeftStart'
     if (!mim.can(action, event)) {
-      //mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
+      mim_debug(action, event, mim.handlerOutcomes.DISALLOWED)
       mim.cancel(event)
       return
     }
     mim.state = mim.states.DRAG
     if (mim.callback(action, event) === false) {
       mim.state = mim.states.GRABBED
-      //return mim.#debug(action, event, mim.handlerOutcomes.REFUSED);
+      return mim_debug(action, event, mim.handlerOutcomes.REFUSED)
     }
-    //return mim.#debug(action, event, mim.handlerOutcomes.ACCEPTED);
+    return mim_debug(action, event, mim.handlerOutcomes.ACCEPTED)
   }
 
   const mim_handleDragMove = (event) => {
     clearTimeout(mim.constructor.longPressTimeout)
     const action = mim._dragRight ? 'dragRightMove' : 'dragLeftMove'
-    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
-    if (!mim.can(action, event)) return
-    //const handled = mim.callback(action, event);
-    mim.callback(action, event)
-    //return mim.#debug(action, event, handled ? mim.handlerOutcomes.ACCEPTED : mim.handlerOutcomes.REFUSED);
+    if (!mim.can(action, event)) return mim_debug(action, event, mim.handlerOutcomes.DISALLOWED)
+    const handled = mim.callback(action, event)
+    return mim_debug(action, event, handled ? mim.handlerOutcomes.ACCEPTED : mim.handlerOutcomes.REFUSED)
+  }
+
+  const mim_assignOriginData = (event) => {
+    // Set the origin point from layer local position
+    mim.interactionData.origin = event.getLocalPosition(mim.layer)
+
+    // Set screenOrigin as the screen coordinates of the origin
+    mim.interactionData.screenOrigin = new PIXI.Point(event.global.x, event.global.y)
+  }
+
+  const mim_debug = (action, event, outcome = mim.handlerOutcomes.ACCEPTED) => {
+    if (CONFIG.debug.mouseInteraction) {
+      const name = mim.object.constructor.name
+      const targetName = event.target?.constructor.name
+      const { eventPhase, type, button } = event
+      const state = Object.keys(mim.states)[mim.state.toString()]
+      let msg = `${name} | ${action} | state:${state} | target:${targetName} | phase:${eventPhase} | type:${type} | `
+        + `btn:${button} | skipped:${outcome <= -2} | allowed:${outcome > -1} | handled:${outcome > 1}`
+      console.debug(msg)
+    }
   }
 
   mim_handleRightDown(mouseDownEvent)
@@ -341,7 +356,7 @@ const handleMouseUp_forMiddleClickDrag = (mouseUpEvent) => {
   const mim = canvas.mouseInteractionManager
   // Copying (and mildly altering) code from MouseInteractionManager functions. mostly replacing references
 
-  const mim_handleMouseUp = (event) => {
+  const mim_handlePointerUp = (event) => {
     //clearTimeout(mim.constructor.longPressTimeout);
     //// If this is a touch hover event, treat it as a drag
     //if ( (mim.state === mim.states.HOVER) && (event.pointerType === "touch") ) {
@@ -352,55 +367,64 @@ const handleMouseUp_forMiddleClickDrag = (mouseUpEvent) => {
     const priorState = mim.state
 
     // Update event data
-    mim.interactionData.destination = event.getLocalPosition(mim.layer)
-
-    //// Handling of a degenerate case:
-    //// When the manager is in a clicked state and that the button is released in another object
-    //const emulateHoverOut = (mim.state === mim.states.CLICKED) && !event.defaultPrevented
-    //  && (event.target !== mim.object) && (event.target?.parent !== mim.object);
-    //if ( emulateHoverOut ) {
-    //  event.stopPropagation();
-    //  mim.state = mim.states.HOVER;
-    //  mim.#deactivateClickEvents();
-    //  mim.#handleMouseOut(event);
-    //}
+    mim.interactionData.destination = event.getLocalPosition(mim.layer, mim.interactionData.destination)
 
     if (mim.state >= mim.states.DRAG) {
       event.stopPropagation()
       if (event.type.startsWith('right') && !mim._dragRight) return
-      mim_handleDragDrop(event)
+      if (mim.state === mim.states.DRAG) mim_handleDragDrop(event)
     }
 
     // Continue a multi-click drag workflow
     if (event.defaultPrevented) {
       mim.state = priorState
-      //return mim.#debug("mouseUp", event, mim.handlerOutcomes.SKIPPED);
-      return
+      return mim_debug('mouseUp', event, mim.handlerOutcomes.SKIPPED)
     }
+
+    // Handle the unclick event
+    mim_handleUnclick(event)
 
     // Cancel the workflow
     return mim_handleDragCancel(event)
   }
 
   const mim_handleDragDrop = (event) => {
-    const action = mim._dragRight ? 'dragRightDrop' : 'dragLeftDrop'
-    //if ( !mim.can(action, event) ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
-    if (!mim.can(action, event)) return
+    const action = 'dragRightDrop'
+    if (!mim.can(action, event)) return mim_debug(action, event, mim.handlerOutcomes.DISALLOWED)
 
     // Was the drag-drop event handled by the callback?
-    //if ( mim.callback(action, event) === false ) return mim.#debug(action, event, mim.handlerOutcomes.DISALLOWED);
-    if (mim.callback(action, event) === false) return
+    mim.state = mim.states.DROP
+    if (mim.callback(action, event) === false) {
+      mim.state = mim.states.DRAG
+      return mim_debug(action, event, mim.handlerOutcomes.DISALLOWED)
+    }
 
     // Update the workflow state
-    mim.state = mim.states.DROP
-    //return mim.#debug(action, event);
+    return mim_debug(action, event)
   }
 
   const mim_handleDragCancel = (event) => {
     mim.cancel(event)
   }
 
-  mim_handleMouseUp(mouseUpEvent)
+  const mim_handleUnclick = (event) => {
+    // I'm just simplifying the code here
+    event.stopPropagation()
+  }
+
+  const mim_debug = (action, event, outcome = mim.handlerOutcomes.ACCEPTED) => {
+    if (CONFIG.debug.mouseInteraction) {
+      const name = mim.object.constructor.name
+      const targetName = event.target?.constructor.name
+      const { eventPhase, type, button } = event
+      const state = Object.keys(mim.states)[mim.state.toString()]
+      let msg = `${name} | ${action} | state:${state} | target:${targetName} | phase:${eventPhase} | type:${type} | `
+        + `btn:${button} | skipped:${outcome <= -2} | allowed:${outcome > -1} | handled:${outcome > 1}`
+      console.debug(msg)
+    }
+  }
+
+  mim_handlePointerUp(mouseUpEvent)
   // `return false` will call stopPropagation and preventDefault
   return false
 }
@@ -733,8 +757,5 @@ Hooks.on('canvasReady', () => {
   canvas.stage.on('mousedown', handleMouseDown_forMiddleClickDrag)
   canvas.stage.on('mouseup', handleMouseUp_forMiddleClickDrag)  // technically this isn't necessary, based on testing
   updateCanvasDragResistance()
-})
-Hooks.once('canvasReady', () => {
-  Hooks.on('canvasPan', updateCanvasDragResistance)
 })
 Hooks.on('renderSceneConfig', addZoomSettingsToSceneConfig)
