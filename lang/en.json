@@ -19,7 +19,7 @@
       },
       "pan-zoom-mode": {
         "name": "Pan/zoom mode",
-        "hint": "Mouse: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.\n||\nTouchpad: Pan with two-finger drag. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Shift+scroll and Ctrl+Shift+scroll.\n||\nAlternative: Pan with two-finger drag or scroll or shift+scroll. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.",
+        "hint": "Mouse: Standard foundry behavior. Zoom with mouse scroll. Rotate with Shift+scroll and Ctrl+scroll.\nTouchpad: Pan with two-finger drag. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Shift+scroll and Ctrl+Shift+scroll.\nAlternative: Pan with two-finger drag or scroll or shift+scroll. Zoom with two-finger pinch or Ctrl+scroll. Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.",
         "choice_mouse": "Mouse: standard foundry behavior",
         "choice_touchpad": "Touchpad: drag, pinch, rotate with Shift or Ctrl+Shift",
         "choice_alternative": "Alternative: can pan with Shift, rotate while holding Alt"

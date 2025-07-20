@@ -199,6 +199,15 @@ function disableMiddleMouseScrollIfMiddleMousePanIsActive (isActive) {
   }
 }
 
+const disableBrowserGesturesIfTouchpad = (panZoomMode) => {
+  if (panZoomMode === 'Touchpad') {
+    // disable browser back/forward gestures
+    document.getElementsByTagName('BODY')[0].style.overscrollBehaviorX = 'none'
+  } else if (document.getElementsByTagName('BODY')[0].style.overscrollBehaviorX === 'none') {
+    document.getElementsByTagName('BODY')[0].style.overscrollBehaviorX = ''
+  }
+}
+
 const handleMouseDown_forMiddleClickDrag = (mouseDownEvent) => {
   if (!getSetting('middle-mouse-pan')) return true
   if (mouseDownEvent.data.originalEvent.button !== 1) return true // buttons other than middle click - ignoring
@@ -559,6 +568,7 @@ Hooks.on('init', function () {
       'Touchpad': localizeSetting('pan-zoom-mode', 'choice_touchpad'),
       'Alternative': localizeSetting('pan-zoom-mode', 'choice_alternative'),
     },
+    onChange: disableBrowserGesturesIfTouchpad,
     default: 'Mouse',
   })
   game.settings.register(MODULE_ID, 'auto-detect-touchpad', {
@@ -659,6 +669,7 @@ Hooks.once('setup', function () {
     'OVERRIDE',
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
+  disableBrowserGesturesIfTouchpad(getSetting('pan-zoom-mode'))
   // Canvas.maxZoom is bounded lower inside the libwrapped function, but setting it this high ensures core foundry code
   // doesn't over-constrain it
   // (e.g. for initial scene zoom)
