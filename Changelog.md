@@ -1,8 +1,14 @@
+## 2.0.1 - 2025-07-20
+- Disabled browser back/forward gestures when using touchpad mode
+- Added known bugs to readme :(
+
 ## 2.0.0 - 2025-03-23
 - Updated to Foundry V13+ compatibility (only)
 - Removed Drag Resistance override -- now core foundry has good drag resistance :)
 - Removed min/max zoom settings per scene, now they're just determined by your own settings plus the initial view scale
 - Refactored a lot of code to continue working in v13 and to stay up to date
+- KNOWN BUG: touchpad scroll is different in vertical and horizontal directions, which makes it hard to use the touchpad for panning (#67)
+- KNOWN BUG: rotating tokens in "alternative" mode doesn't work as it's supposed to (#69)
 
 ## 1.14.4 - 2025-01-03
 - Improved github workflow automation

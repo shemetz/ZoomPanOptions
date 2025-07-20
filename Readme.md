@@ -31,6 +31,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 
 ### "Touchpad" mode
 - Pan with two-finger drag on the touchpad.
+  - KNOWN BUG: touchpad scroll is different in vertical and horizontal directions, which makes it hard to use the touchpad for panning. see #67
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Shift+scroll and Ctrl+Shift+scroll.
   (Note: if you're using a touchpad and you want to rotate a token, I recommend the [Alternative Rotation](https://github.com/shemetz/AlternativeRotation) module - shift-dragging a token is easier than trying to accurately scroll the right amount/speed)
@@ -40,6 +41,7 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 - Pan with touchpad, or with mouse: vertical mouse scroll will pan up and down, and horizontal mouse scroll will pan left and right.
 - Zoom with two-finger pinch or Ctrl+scroll.
 - Rotate with Alt+Shift+scroll and Alt+Ctrl+scroll.
+  - KNOWN BUG in V13: this does not work.  see #69
 - (Ctrl can be replaced with Cmd (mac) or WinKey (windows), as usual in Foundry)
 
 ### Auto-detect touchpad (BUGGY)
