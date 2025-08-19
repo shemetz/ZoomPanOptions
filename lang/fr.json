@@ -1,0 +1,66 @@
+{
+  "zoom-pan-options": {
+    "settings": {
+      "zoom-around-cursor": {
+        "name": "Zoom autour du curseur",
+        "hint": "Zoom centré autour du curseur. Ne s'applique pas au zoom avec Hautpage ou Baspage."
+      },
+      "middle-mouse-pan": {
+        "name": "bouton central de la souris pour déplacer",
+        "hint": "Appuyez sur le bouton central de la souris pour déplacer le canevas, au lieu de ne rien faire par défaut."
+      },
+      "max-zoom-override": {
+        "name": "Remplacement du zoom maximal",
+        "hint": "Remplacement de la limite d'échelle de zoom maximale. 3 est la valeur par défaut de Foundry (jusqu'à une mise à l'échelle x3)."
+      },
+      "min-zoom-override": {
+        "name": "Remplacement du zoom minimum",
+        "hint": "Remplacement de la limite d'échelle de zoom minimale. 0,333 est la valeur par défaut de Foundry (jusqu'à une mise à l'échelle x0,333)."
+      },
+      "pan-zoom-mode": {
+        "name": "Mode déplacement/zoom",
+        "hint": "Souris : Fonctionnement standard de Foundry. Zoom avec la molette de la souris. Rotation avec Maj + défilement et Ctrl + défilement.\nPavé tactile : Déplacement avec deux doigts. Zoom en rapprochant deux doigts ou Ctrl + défilement. Rotation avec Maj + défilement et Ctrl + Maj + défilement.\nAlternativement : Déplacement avec deux doigts en glissant ou Maj + défilement. Zoom en rapprochant deux doigts ou Ctrl + défilement. Rotation avec Alt + Maj + défilement et Alt + Ctrl + défilement.",
+        "choice_mouse": "Souris : comportement standard de Foundry",
+        "choice_touchpad": "Pavé tactile : faites glisser, rapprochez, faites pivoter avec Maj ou Ctrl+Maj",
+        "choice_alternative": "Alternative : peut déplacer avec Shift, faire pivoter en maintenant Alt"
+      },
+      "auto-detect-touchpad": {
+        "name": "Détection automatique du pavé tactile (BUGGÉE)",
+        "hint": "Essayera de détecter automatiquement les pavés tactiles ; utiliser soit la souris, soit le pavé tactile selon le résultat (ou l'option alternative si elle a été sélectionnée). Cette fonctionnalité présente des bugs et ne fonctionne pas pour tout le monde !"
+      },
+      "invert-vertical-scroll": {
+        "name": "Inverser le défilement vertical",
+        "hint": "Si défini sur vrai, vous ferez défiler vers le haut lorsque vous ferez glisser/défilerez vers le bas."
+      },
+      "zoom-speed-multiplier": {
+        "name": "Vitesse du zoom",
+        "hint": "Multiplie la vitesse du zoom, affectant la vitesse de mise à l'échelle. 0,1 ou 10 pourrait être préférable pour certains pavés tactiles. 0 pour le comportement par défaut de Foundry (qui ignore l'intensité du défilement et semble pire pour les pavés tactiles)."
+      },
+      "pan-speed-multiplier": {
+        "name": "Vitesse de déplacement (pour le mode pavé tactile)",
+        "hint": "Multiplie la vitesse de déplacement si vous utilisez le pavé tactile/le mode alternatif. La valeur par défaut est 1, ce qui devrait être proche de la vitesse de déplacement obtenue lors du glissement avec un clic droit sur le canevas."
+      },
+      "pad-value-when-dragging": {
+        "name": "valeur « pad » lors du déplacement d'un élément vers le bord de l'écran",
+        "hint": "En maintenant le curseur enfoncé et en le déplaçant vers le bord de l'écran, le canevas se déplace. « Pad » correspond à la distance qui déclenche le déplacement. La valeur par défaut de Foundry est de 50 px."
+      },
+      "shift-value-when-dragging": {
+        "name": "valeur « shift » lors du déplacement d'un élément vers le bord de l'écran",
+        "hint": "En maintenant le curseur enfoncé et en le déplaçant vers le bord de l'écran, le canevas se déplace. « Shift » correspond à la distance de déplacement en tuiles. La valeur par défaut de Foundry est de 3 tuiles."
+      }
+    },
+    "keybindings": {
+      "toggle-touchpad-mode": {
+        "name": "Basculer le mode souris/pavé tactile"
+      },
+      "toggle-alternative-mode": {
+        "name": "Basculer entre la souris et le mode alternatif"
+      },
+      "notifications": {
+        "Mouse": "Options de zoom/déplacement : mode souris activé.",
+        "Touchpad": "Options de zoom/déplacement : mode écran tactile activé.",
+        "Alternative": "Options de zoom/déplacement : mode alternatif activé."
+      }
+    }
+  }
+}
