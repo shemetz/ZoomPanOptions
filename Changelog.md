@@ -1,3 +1,7 @@
+## 2.0.2 - 2025-08-20
+- Added French localization
+- Added clarification to settings:  initial zoom level limits the limit overrides
+
 ## 2.0.1 - 2025-07-20
 - Disabled browser back/forward gestures when using touchpad mode
 - Added known bugs to readme :(

@@ -2,7 +2,7 @@
   "id": "zoom-pan-options",
   "title": "Zoom/Pan Options",
   "description": "Adds cursor-based zoom, touchpad/scrollwheel zoom/pan support, and other options.",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
