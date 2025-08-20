@@ -11,11 +11,11 @@
       },
       "max-zoom-override": {
         "name": "Maximum zoom override",
-        "hint": "Override for the maximum zoom scale limit. 3 is the Foundry default (up to x3 scaling)."
+        "hint": "Override for the maximum zoom scale limit (cannot limit beyond initial scene zoom). 3 is the Foundry default (up to x3 scaling)."
       },
       "min-zoom-override": {
         "name": "Minimum zoom override",
-        "hint": "Override for the minimum zoom scale limit. 0.333 is the Foundry default (down to x0.333 scaling)."
+        "hint": "Override for the minimum zoom scale limit (cannot limit beyond initial scene zoom). 0.333 is the Foundry default (down to x0.333 scaling)."
       },
       "pan-zoom-mode": {
         "name": "Pan/zoom mode",
