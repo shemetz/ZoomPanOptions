@@ -513,6 +513,47 @@ const avoidLockViewIncompatibility = () => {
   })
 }
 
+/**
+ * Workaround for https://github.com/shemetz/ZoomPanOptions/issues/67.
+ *
+ * `game.mouse.#onWheel` has an early-return if `dy === 0` which means that any purely horizontal
+ * scrolling is ignored by the canvas.
+ *
+ * This method patches `MouseManager` and replaces the `game.mouse` instance with one that does not
+ * include this check.
+ *
+ * The patching should be done in the"setup" hook, before `game.mouse._activateListeners`.
+ */
+function fixHorizontalPanning () {
+  const BAD_LINE = 'if ( dy === 0 ) return;'
+
+  const origSourceCode = foundry.helpers.interaction.MouseManager.toString()
+
+  // Don't break anything if MouseManager no longer matches our expectations.
+  if (!origSourceCode.includes(BAD_LINE)) {
+    console.warn('Zoom/Pan Options |', `Cannot patch MouseManager: Cannot find string '${BAD_LINE}'`)
+    return
+  }
+
+  //// Do all the patching:
+  // 1. Remove the line causing the horizontal panning issues.
+  // 2. Patch the constructor which prevents re-instantiation.
+  // 3. Rename the class to clarify stack traces.
+  const newSourceCode = origSourceCode
+    .replace(BAD_LINE, '')
+    .replace('if ( game.mouse ) throw', '//')
+    .replace('class MouseManager', 'class ZoomPanPatchedMouseManager')
+
+  // Use `eval` to instantiate this patched class, but fail gracefully if something goes wrong.
+  try {
+    eval(newSourceCode + '\r\n window.ZoomPanPatchedMouseManager = ZoomPanPatchedMouseManager; \r\n')
+    const newMouseManager = new window.ZoomPanPatchedMouseManager()
+    Object.defineProperty(game, 'mouse', { value: newMouseManager, writable: false })
+  } catch (ex) {
+    console.warn('Zoom/Pan Options |', 'Cannot patch MouseManager:', ex)
+  }
+}
+
 Hooks.on('init', function () {
   console.log('Initializing Zoom/Pan Options')
   game.settings.register(MODULE_ID, 'zoom-around-cursor', {
@@ -670,6 +711,7 @@ Hooks.once('setup', function () {
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   disableBrowserGesturesIfTouchpad(getSetting('pan-zoom-mode'))
+  fixHorizontalPanning()
   // Canvas.maxZoom is bounded lower inside the libwrapped function, but setting it this high ensures core foundry code
   // doesn't over-constrain it
   // (e.g. for initial scene zoom)
