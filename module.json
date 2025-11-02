@@ -22,6 +22,12 @@
       "name": "French",
       "path": "lang/fr.json",
       "flags": {}
+    },
+    {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "lang/ja.json",
+      "flags": {}
     }
   ],
   "url": "https://github.com/shemetz/ZoomPanOptions",
