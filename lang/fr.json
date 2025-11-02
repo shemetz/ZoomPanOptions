@@ -58,7 +58,7 @@
       },
       "notifications": {
         "Mouse": "Options de zoom/déplacement : mode souris activé.",
-        "Touchpad": "Options de zoom/déplacement : mode écran tactile activé.",
+        "Touchpad": "Options de zoom/déplacement : mode pavé tactile activé.",
         "Alternative": "Options de zoom/déplacement : mode alternatif activé."
       }
     }

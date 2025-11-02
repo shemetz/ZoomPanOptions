@@ -58,7 +58,7 @@
       },
       "notifications": {
         "Mouse": "Zoom/Pan Options: Mouse mode enabled.",
-        "Touchpad": "Zoom/Pan Options: Touchscreen mode enabled.",
+        "Touchpad": "Zoom/Pan Options: Touchpad mode enabled.",
         "Alternative": "Zoom/Pan Options: Alternative mode enabled."
       }
     }
