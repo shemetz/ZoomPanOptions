@@ -1,3 +1,6 @@
+## 2.0.4 - 2025-11-10
+- Fixed #72 (min/max zoom not working)
+
 ## 2.0.2 - 2025-08-20
 - Added French localization
 - Added clarification to settings:  initial zoom level limits the limit overrides
