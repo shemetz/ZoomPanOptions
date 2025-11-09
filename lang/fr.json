@@ -15,7 +15,7 @@
       },
       "min-zoom-override": {
         "name": "Remplacement du zoom minimum",
-        "hint": "Remplacement de la limite d'échelle de zoom minimale. 0,333 est la valeur par défaut de Foundry (jusqu'à une mise à l'échelle x0,333)."
+        "hint": "Remplacement de la limite d'échelle de zoom minimale. 1 est la valeur par défaut de Foundry (jusqu'à une mise à l'échelle x1)."
       },
       "pan-zoom-mode": {
         "name": "Mode déplacement/zoom",

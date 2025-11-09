@@ -32,6 +32,27 @@ function checkRotationRateLimit (layer) {
   return true
 }
 
+const updateMinMaxZoomLimits = () => {
+  if (!canvas.scene) return
+  const maxZoomFactor = getSetting('max-zoom-override') ?? 3
+  const minZoomFactor = getSetting('min-zoom-override-v2') ?? 1
+  // code based on the fvtt getDimensions function, which defaults to particular min and max scale values;
+  // in my code here I repeat the calculation but allow changing the factors
+  const sceneDimensions = canvas.scene.getDimensions()
+  const padding = sceneDimensions.size
+  const paddedSceneWidth = sceneDimensions.width + (2 * padding)
+  const paddedSceneHeight = sceneDimensions.height + (2 * padding)
+  const { innerWidth, innerHeight } = window
+  const grid = canvas.scene.grid
+  const factor = maxZoomFactor * (canvas.scene._source.grid.size / grid.size)
+  const minZoom = Math.min(Math.min(innerWidth / paddedSceneWidth, innerHeight / paddedSceneHeight, 1) * minZoomFactor, canvas.scene.initial.scale)
+  const maxZoom = Math.max(Math.min(innerWidth / grid.sizeX, innerHeight / grid.sizeY) / factor, canvas.scene.initial.scale)
+  CONFIG.Canvas.minZoom = minZoom
+  CONFIG.Canvas.maxZoom = maxZoom
+  canvas.dimensions.scale.min = minZoom
+  canvas.dimensions.scale.max = maxZoom
+}
+
 /**
  * note:  this is not perfect which is why it's opt-in.  see issue: https://github.com/shemetz/ZoomPanOptions/issues/30
  */
@@ -156,15 +177,6 @@ function zoom (event) {
     return
   }
 
-  const scale = scaleChangeRatio * canvas.stage.scale.x  // scale x and scale y are the same
-  const max = Math.max(canvas.scene.initial.scale, getSetting('max-zoom-override'))
-  const min = Math.min(canvas.scene.initial.scale, getSetting('min-zoom-override'))
-  if (scale > max || scale < min) {
-    console.log('Zoom/Pan Options |', `scale exceeds limit (${scale}), bounding to interval [${min}, ${max}).`)
-    canvas.pan({ scale: scale > max ? max : scale < min ? min : scale })
-    return
-  }
-
   // Acquire the cursor position transformed to Canvas coordinates
   const canvasEventPos = canvas.stage.worldTransform.applyInverse({ x: event.clientX, y: event.clientY })
   const canvasPivotPos = canvas.stage.pivot
@@ -177,7 +189,22 @@ function zoom (event) {
   // cursor in the exact same world coords.
   const x = canvasPivotPos.x + scaledDeltaX
   const y = canvasPivotPos.y + scaledDeltaY
-  canvas.pan({ scale, x, y })
+  const scale = canvas.stage.scale.x // scale x and scale y are the same
+  const targetScale = scaleChangeRatio * scale
+  const max = canvas.dimensions.scale.max
+  const min = canvas.dimensions.scale.min
+  if (targetScale > max || targetScale < min) {
+    if (scale === max || scale === min) {
+      console.log('Zoom/Pan Options |', `scale is at limit (${scale})`)
+      return
+    }
+    console.log('Zoom/Pan Options |', `scale (${targetScale}) would exceed limit, bounding to interval [${min}, ${max}).`)
+    // (we do not want to change x and y when min/max zoom is reached, to avoid unintended panning)
+    canvas.pan({ x, y, scale: Math.clamp(targetScale, min, max) })
+    return
+  }
+  /** note:  minZoom and maxZoom will be applied to canvas.dimensions.scale.max (etc) and then used in _constrainView */
+  canvas.pan({ x, y, scale: targetScale })
 }
 
 function panWithMultiplier (event) {
@@ -532,7 +559,6 @@ Hooks.on('init', function () {
     type: Boolean,
     onChange: disableMiddleMouseScrollIfMiddleMousePanIsActive,
   })
-  // migrating away from this...
   game.settings.register(MODULE_ID, 'min-max-zoom-override', {
     name: 'OLD min-max-zoom-override',
     scope: 'client',
@@ -540,7 +566,6 @@ Hooks.on('init', function () {
     type: Number,
     default: null,
   })
-  // ...to these two:
   game.settings.register(MODULE_ID, 'max-zoom-override', {
     name: localizeSetting('max-zoom-override', 'name'),
     hint: localizeSetting('max-zoom-override', 'hint'),
@@ -548,15 +573,36 @@ Hooks.on('init', function () {
     config: true,
     default: 3,
     type: Number,
+    onChange: updateMinMaxZoomLimits,
   })
+  // migrating away from this...
   game.settings.register(MODULE_ID, 'min-zoom-override', {
     name: localizeSetting('min-zoom-override', 'name'),
     hint: localizeSetting('min-zoom-override', 'hint'),
     scope: 'client',
-    config: true,
+    config: false,
     default: 1 / 3,
     type: Number,
+    onChange: updateMinMaxZoomLimits,
   })
+  // ...to this:
+  game.settings.register(MODULE_ID, 'min-zoom-override-v2', {
+    name: localizeSetting('min-zoom-override', 'name'),
+    hint: localizeSetting('min-zoom-override', 'hint'),
+    scope: 'client',
+    config: true,
+    default: 1,
+    type: Number,
+    onChange: updateMinMaxZoomLimits,
+  })
+  if (game.settings.get(MODULE_ID, 'min-zoom-override') !== null) {
+    console.log('Zoom/Pan Options |', 'migrating min-zoom-override to min-zoom-override-v2')
+    console.log('Zoom/Pan Options |',
+      `old setting value was: ${game.settings.get(MODULE_ID, 'min-zoom-override')}}`)
+    game.settings.set(MODULE_ID, 'min-zoom-override-v2', game.settings.get(MODULE_ID, 'min-zoom-override') * 3)
+    game.settings.set(MODULE_ID, 'min-zoom-override', null)
+  }
+
   game.settings.register(MODULE_ID, 'pan-zoom-mode', {
     name: localizeSetting('pan-zoom-mode', 'name'),
     hint: localizeSetting('pan-zoom-mode', 'hint'),
@@ -670,15 +716,11 @@ Hooks.once('setup', function () {
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   disableBrowserGesturesIfTouchpad(getSetting('pan-zoom-mode'))
-  // Canvas.maxZoom is bounded lower inside the libwrapped function, but setting it this high ensures core foundry code
-  // doesn't over-constrain it
-  // (e.g. for initial scene zoom)
-  CONFIG.Canvas.maxZoom = 999
-  CONFIG.Canvas.minZoom = 1 / 999 // TODO minZoom will probably be available in V13 testing 4 or later
   console.log('Done setting up Zoom/Pan Options.')
 })
 
 Hooks.on('canvasReady', () => {
   canvas.stage.on('mousedown', handleMouseDown_forMiddleClickDrag)
   canvas.stage.on('mouseup', handleMouseUp_forMiddleClickDrag)  // technically this isn't necessary, based on testing
+  updateMinMaxZoomLimits()
 })

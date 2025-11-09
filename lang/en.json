@@ -15,7 +15,7 @@
       },
       "min-zoom-override": {
         "name": "Minimum zoom override",
-        "hint": "Override for the minimum zoom scale limit (cannot limit beyond initial scene zoom), lower means you can see more of the scene at once. 0.333 is the Foundry default (down to x0.333 scaling)."
+        "hint": "Override for the minimum zoom scale limit (cannot limit beyond initial scene zoom), lower means you can see more of the scene at once. 1 is the Foundry default (down to x1 pixel-to-pixel scaling)."
       },
       "pan-zoom-mode": {
         "name": "Pan/zoom mode",
