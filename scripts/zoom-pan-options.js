@@ -44,7 +44,7 @@ const updateMinMaxZoomLimits = () => {
   const paddedSceneHeight = sceneDimensions.height + (2 * padding)
   const { innerWidth, innerHeight } = window
   const grid = canvas.scene.grid
-  const factor = maxZoomFactor * (canvas.scene._source.grid.size / grid.size)
+  const factor = (9 / maxZoomFactor) * (canvas.scene._source.grid.size / grid.size)
   const minZoom = Math.min(Math.min(innerWidth / paddedSceneWidth, innerHeight / paddedSceneHeight, 1) * minZoomFactor, canvas.scene.initial.scale)
   const maxZoom = Math.max(Math.min(innerWidth / grid.sizeX, innerHeight / grid.sizeY) / factor, canvas.scene.initial.scale)
   CONFIG.Canvas.minZoom = minZoom
