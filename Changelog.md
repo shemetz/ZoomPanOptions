@@ -1,3 +1,7 @@
+## 2.0.5 - 2025-11-12
+- Fixed calculation of max zoom, should be closer to normal foundry behavior now, when defaults are set (3 and 1)
+- Added Japanese localization
+
 ## 2.0.4 - 2025-11-10
 - Fixed #72 (min/max zoom not working)
 
