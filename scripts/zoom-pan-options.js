@@ -116,12 +116,13 @@ class MouseManager_ZoomPanOptions_Override {
     // Prevent zooming the entire browser window
     if (event.ctrlKey) event.preventDefault()
 
-    // Interpret shift+scroll as vertical scroll
-    let dy = event.delta = event.deltaY
-    if (event.shiftKey && (dy === 0)) {
-      dy = event.delta = event.deltaX
-    }
-    if (dy === 0) return
+    // ZPO:  commenting this out because we don't want to disable horizontal-only scroll
+    //// Interpret shift+scroll as vertical scroll
+    //let dy = event.delta = event.deltaY
+    //if (event.shiftKey && (dy === 0)) {
+    //  dy = event.delta = event.deltaX
+    //}
+    //if (dy === 0) return
 
     // Take no actions if the canvas is not hovered
     if (!canvas.ready) return
