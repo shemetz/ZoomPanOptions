@@ -798,6 +798,13 @@ Hooks.once('setup', function () {
   )
   disableMiddleMouseScrollIfMiddleMousePanIsActive(getSetting('middle-mouse-pan'))
   disableBrowserGesturesIfTouchpad(getSetting('pan-zoom-mode'))
+
+  // override game.mouse
+  window.MouseManager_ZoomPanOptions_Override = MouseManager_ZoomPanOptions_Override
+  Object.defineProperty(game, 'mouse', { value: null, writable: true })
+  const newMouseManager = new window.MouseManager_ZoomPanOptions_Override()
+  Object.defineProperty(game, 'mouse', { value: newMouseManager, writable: false })
+
   console.log('Done setting up Zoom/Pan Options.')
 })
 
