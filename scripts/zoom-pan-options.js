@@ -112,17 +112,27 @@ class MouseManager_ZoomPanOptions_Override {
    * @param {WheelEvent} event    The mouse wheel event
    */
   #onWheel (event) {
-
     // Prevent zooming the entire browser window
-    if (event.ctrlKey) event.preventDefault()
+    // ZPO:  ctrl and meta should work the same way
+    if (event.ctrlKey || event.metaKey) event.preventDefault()
+    // ZPO:  (re-)defining some variables
+    const isCtrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL) // We cannot trust event.ctrlKey because of touchpads
+    const isShift = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.SHIFT)
+    const isAlt = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.ALT)
 
-    // ZPO:  commenting this out because we don't want to disable horizontal-only scroll
+    // ZPO:  commenting this out and rewriting it in a way that allows for horizontal-only scroll (via trackpad for example)
     //// Interpret shift+scroll as vertical scroll
     //let dy = event.delta = event.deltaY
     //if (event.shiftKey && (dy === 0)) {
     //  dy = event.delta = event.deltaX
     //}
     //if (dy === 0) return
+    const deltaY = event.wheelDelta !== undefined ? -event.wheelDelta
+      // wheelDelta is undefined in firefox
+      : event.deltaY
+    const deltaX = event.deltaX
+    // Foundry internally invents a field, `event.delta`, so we must define it (same way)
+    event.delta = deltaY === 0 ? deltaX : event.deltaY
 
     // Take no actions if the canvas is not hovered
     if (!canvas.ready) return
@@ -130,9 +140,20 @@ class MouseManager_ZoomPanOptions_Override {
     if (!hover || (hover.id !== 'board')) return
     event.preventDefault()
 
-    // Identify scroll modifiers
-    const isCtrl = game.keyboard.isModifierActive('CONTROL') // We cannot trust event.ctrlKey because of touchpads
-    const isShift = event.shiftKey
+    // Select scrolling mode
+    let mode
+    if (getSetting('auto-detect-touchpad')) {
+      const touchpad = isTouchpad(event)
+      if (!touchpad) {
+        mode = 'Mouse'
+      } else if (getSetting('pan-zoom-mode') === 'Alternative') {
+        mode = 'Alternative'
+      } else {
+        mode = 'Touchpad'
+      }
+    } else {
+      mode = getSetting('pan-zoom-mode')
+    }
 
     // Case 1 - active Ruler
     const ruler = canvas.controls.ruler
@@ -154,46 +175,22 @@ class MouseManager_ZoomPanOptions_Override {
       }
     }
 
-    // Case 4 - zoom the canvas
-    let mode
-    const shift = event.shiftKey
-    const alt = event.altKey
-    const ctrlOrMeta = event.ctrlKey || event.metaKey  // meta key (cmd on mac, winkey in windows) will behave like ctrl
+    // ZPO:  detailed override/rewrite for Case 4
 
-    // Select scrolling mode
-    if (getSetting('auto-detect-touchpad')) {
-      const touchpad = isTouchpad(event)
-      if (!touchpad) {
-        mode = 'Mouse'
-      } else if (getSetting('pan-zoom-mode') === 'Alternative') {
-        mode = 'Alternative'
-      } else {
-        mode = 'Touchpad'
-      }
-    } else {
-      mode = getSetting('pan-zoom-mode')
-    }
-
-    const layer = canvas.activeLayer
-
-    // Case 4.1 - rotate stuff
-    const deltaY = event.wheelDelta !== undefined ? -event.wheelDelta
-      // wheelDelta is undefined in firefox
-      : event.deltaY
-    event.delta = deltaY
-    if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
+    // Case 4.1 - rotate placeable objects
+    if (mode === 'Mouse' && (isCtrl || isShift)) {
       return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel(event)
     }
-    if (mode === 'Touchpad' && shift) {
+    if (mode === 'Touchpad' && isShift) {
       return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
         delta: deltaY,
-        shiftKey: shift && !ctrlOrMeta,
+        shiftKey: isShift && !isCtrl,
       })
     }
-    if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
+    if (mode === 'Alternative' && isAlt && (isCtrl || isShift)) {
       return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
         delta: deltaY,
-        shiftKey: shift,
+        shiftKey: isShift,
       })
     }
 
@@ -201,17 +198,17 @@ class MouseManager_ZoomPanOptions_Override {
     // (written to be readable)
     if (
       mode === 'Mouse'
-      || (mode === 'Touchpad' && ctrlOrMeta)
-      || (mode === 'Alternative' && ctrlOrMeta)
+      || (mode === 'Touchpad' && isCtrl)
+      || (mode === 'Alternative' && isCtrl)
     ) {
       return zoom(event)
     }
 
     // Cast 4.3 - pan the canvas horizontally (shift+scroll)
-    if (mode === 'Alternative' && shift) {
+    if (mode === 'Alternative' && isShift) {
       // noinspection JSSuspiciousNameCombination
       return panWithMultiplier({
-        deltaX: event.deltaY,
+        deltaX: deltaY, // (this is intentionally passing Y for X)
       })
     }
 
