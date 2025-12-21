@@ -1,3 +1,11 @@
+## 2.1.0 - 2025-12-21
+- Fixed bug that ignored horizontal scrolling in Touchpad mode
+- Fixed bug that messed with rotation during Alternative mode (#69)
+- Rewritten some significant parts of the code
+- Known bug:  for many trackpads/browsers, dragging with two fingers will "lock" to one axis if it doesn't begin with
+a diagonal motion, and so the map panning will be limited to only horizontal or only vertical (unless you carefully
+begin the drag motion by moving both fingers diagonally)
+
 ## 2.0.5 - 2025-11-12
 - Fixed calculation of max zoom, should be closer to normal foundry behavior now, when defaults are set (3 and 1)
 - Added Japanese localization
