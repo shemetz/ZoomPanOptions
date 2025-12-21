@@ -155,91 +155,69 @@ class MouseManager_ZoomPanOptions_Override {
     }
 
     // Case 4 - zoom the canvas
-    canvas._onMouseWheel(event)
-  }
-}
+    let mode
+    const shift = event.shiftKey
+    const alt = event.altKey
+    const ctrlOrMeta = event.ctrlKey || event.metaKey  // meta key (cmd on mac, winkey in windows) will behave like ctrl
 
-/**
- * In foundry V13, MouseManager.#onWheel is #private so we can't override it directly :(
- * But the way it works is basically:
- *
- *   event.preventDefault();
- *   // Take no actions if the canvas is not hovered
- *   if (not hovering over canvas#board) return
- *   // Case 1 - active Ruler
- *   if (ruler.active && (ctrl || shift)) return ruler._onMouseWheel(event)
- *   // Case 2 - active Token Ruler
- *   if (draggedToken && (ctrl || shift)) return draggedToken._onMouseWheel(event)
- *   // Case 3 - rotate placeable objects
- *   if ((activeLayer.controlled.length) && (ctrl || shift)) return activeLayer._onMouseWheel(event)
- *   // Case 4 - zoom the canvas
- *   return canvas._onMouseWheel(event)
- *
- * So in V13+, ZoomPanOptions will override canvas._onMouseWheel, and will no longer handle cases 1-3 above.
- */
-const canvas_onMouseWheel_override = (event) => {
-  let mode
-  const shift = event.shiftKey
-  const alt = event.altKey
-  const ctrlOrMeta = event.ctrlKey || event.metaKey  // meta key (cmd on mac, winkey in windows) will behave like ctrl
-
-  // Select scrolling mode
-  if (getSetting('auto-detect-touchpad')) {
-    const touchpad = isTouchpad(event)
-    if (!touchpad) {
-      mode = 'Mouse'
-    } else if (getSetting('pan-zoom-mode') === 'Alternative') {
-      mode = 'Alternative'
+    // Select scrolling mode
+    if (getSetting('auto-detect-touchpad')) {
+      const touchpad = isTouchpad(event)
+      if (!touchpad) {
+        mode = 'Mouse'
+      } else if (getSetting('pan-zoom-mode') === 'Alternative') {
+        mode = 'Alternative'
+      } else {
+        mode = 'Touchpad'
+      }
     } else {
-      mode = 'Touchpad'
+      mode = getSetting('pan-zoom-mode')
     }
-  } else {
-    mode = getSetting('pan-zoom-mode')
-  }
 
-  const layer = canvas.activeLayer
+    const layer = canvas.activeLayer
 
-  // Case 4.1 - rotate stuff
-  const deltaY = event.wheelDelta !== undefined ? -event.wheelDelta
-    // wheelDelta is undefined in firefox
-    : event.deltaY
-  event.delta = deltaY
-  if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
-    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel(event)
-  }
-  if (mode === 'Touchpad' && shift) {
-    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
-      delta: deltaY,
-      shiftKey: shift && !ctrlOrMeta,
-    })
-  }
-  if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
-    return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
-      delta: deltaY,
-      shiftKey: shift,
-    })
-  }
+    // Case 4.1 - rotate stuff
+    const deltaY = event.wheelDelta !== undefined ? -event.wheelDelta
+      // wheelDelta is undefined in firefox
+      : event.deltaY
+    event.delta = deltaY
+    if (mode === 'Mouse' && (ctrlOrMeta || shift)) {
+      return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel(event)
+    }
+    if (mode === 'Touchpad' && shift) {
+      return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
+        delta: deltaY,
+        shiftKey: shift && !ctrlOrMeta,
+      })
+    }
+    if (mode === 'Alternative' && alt && (ctrlOrMeta || shift)) {
+      return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
+        delta: deltaY,
+        shiftKey: shift,
+      })
+    }
 
-  // Case 4.2 - zoom the canvas
-  // (written to be readable)
-  if (
-    mode === 'Mouse'
-    || (mode === 'Touchpad' && ctrlOrMeta)
-    || (mode === 'Alternative' && ctrlOrMeta)
-  ) {
-    return zoom(event)
-  }
+    // Case 4.2 - zoom the canvas
+    // (written to be readable)
+    if (
+      mode === 'Mouse'
+      || (mode === 'Touchpad' && ctrlOrMeta)
+      || (mode === 'Alternative' && ctrlOrMeta)
+    ) {
+      return zoom(event)
+    }
 
-  // Cast 4.3 - pan the canvas horizontally (shift+scroll)
-  if (mode === 'Alternative' && shift) {
-    // noinspection JSSuspiciousNameCombination
-    return panWithMultiplier({
-      deltaX: event.deltaY,
-    })
-  }
+    // Cast 4.3 - pan the canvas horizontally (shift+scroll)
+    if (mode === 'Alternative' && shift) {
+      // noinspection JSSuspiciousNameCombination
+      return panWithMultiplier({
+        deltaX: event.deltaY,
+      })
+    }
 
-  // Case 4.4 - pan the canvas in the direction of the mouse/touchpad event
-  panWithMultiplier(event)
+    // Case 4.4 - pan the canvas in the direction of the mouse/touchpad event
+    panWithMultiplier(event)
+  }
 }
 
 /**
