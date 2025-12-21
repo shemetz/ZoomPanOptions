@@ -18,20 +18,6 @@ function localizeKeybinding (scope, str) {
   return game.i18n.localize(MODULE_ID + '.keybindings.' + scope + '.' + str)
 }
 
-function checkRotationRateLimit (layer) {
-  const hoveredLayerThing = layer.hover
-  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!hoveredLayerThing
-  if (!hasTarget)
-    return false
-  const t = Date.now()
-  const rate_limit = game.mouse.constructor.MOUSE_WHEEL_RATE_LIMIT
-
-  if ((t - game.keyboard._wheelTime) < rate_limit)
-    return false
-  game.keyboard._wheelTime = t
-  return true
-}
-
 const updateMinMaxZoomLimits = () => {
   if (!canvas.scene) return
   const maxZoomFactor = getSetting('max-zoom-override') ?? 3
@@ -96,6 +82,15 @@ class MouseManager_ZoomPanOptions_Override {
   static MOUSE_WHEEL_RATE_LIMIT = 50
 
   /* -------------------------------------------- */
+
+  /** ZPO:  utility function */
+  debounceRotationByRateLimit () {
+    const t = Date.now()
+    if ((t - this.#wheelTime) < MouseManager_ZoomPanOptions_Override.MOUSE_WHEEL_RATE_LIMIT)
+      return false
+    this.#wheelTime = t
+    return true
+  }
 
   /**
    * Begin listening to mouse events.
@@ -164,35 +159,39 @@ class MouseManager_ZoomPanOptions_Override {
     if (draggedToken && (isCtrl || isShift)) return draggedToken._onDragMouseWheel(event)
 
     // Case 3 - rotate placeable objects
+    // ZPO:  rewritten better below
+    //const layer = canvas.activeLayer
+    //if (layer?.options?.rotatableObjects && (isCtrl || isShift)) {
+    //  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer.hover
+    //  if (hasTarget) {
+    //    const t = Date.now()
+    //    if ((t - this.#wheelTime) < this.constructor.MOUSE_WHEEL_RATE_LIMIT) return
+    //    this.#wheelTime = t
+    //    return layer._onMouseWheel(event)
+    //  }
+    //}
     const layer = canvas.activeLayer
-    if (layer?.options?.rotatableObjects && (isCtrl || isShift)) {
-      const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer.hover
-      if (hasTarget) {
-        const t = Date.now()
-        if ((t - this.#wheelTime) < this.constructor.MOUSE_WHEEL_RATE_LIMIT) return
-        this.#wheelTime = t
-        return layer._onMouseWheel(event)
+    const layerPossiblyHasRotatableObjects = layer?.options?.rotatableObjects
+    const currentlyHasRotationTarget = layer?.options?.controllableObjects ? layer?.controlled?.length : !!layer?.hover
+    if (layerPossiblyHasRotatableObjects && currentlyHasRotationTarget) {
+      if (mode === 'Mouse' && (isCtrl || isShift)) {
+        return this.debounceRotationByRateLimit() && checkZoomLock() && layer._onMouseWheel(event)
+      }
+      if (mode === 'Touchpad' && isShift) {
+        return this.debounceRotationByRateLimit() && checkZoomLock() && layer._onMouseWheel({
+          delta: deltaY,
+          shiftKey: isShift && !isCtrl,
+        })
+      }
+      if (mode === 'Alternative' && isAlt && (isCtrl || isShift)) {
+        return this.debounceRotationByRateLimit() && checkZoomLock() && layer._onMouseWheel({
+          delta: deltaY,
+          shiftKey: isShift,
+        })
       }
     }
 
-    // ZPO:  detailed override/rewrite for Case 4
-
-    // Case 4.1 - rotate placeable objects
-    if (mode === 'Mouse' && (isCtrl || isShift)) {
-      return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel(event)
-    }
-    if (mode === 'Touchpad' && isShift) {
-      return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
-        delta: deltaY,
-        shiftKey: isShift && !isCtrl,
-      })
-    }
-    if (mode === 'Alternative' && isAlt && (isCtrl || isShift)) {
-      return checkRotationRateLimit(layer) && checkZoomLock() && layer._onMouseWheel({
-        delta: deltaY,
-        shiftKey: isShift,
-      })
-    }
+    // ZPO:  detailed override/rewrite for zooming and panning
 
     // Case 4.2 - zoom the canvas
     // (written to be readable)
@@ -201,6 +200,10 @@ class MouseManager_ZoomPanOptions_Override {
       || (mode === 'Touchpad' && isCtrl)
       || (mode === 'Alternative' && isCtrl)
     ) {
+      return zoom(event)
+    }
+    // Case 4.2.2 - zoom the canvas if the user is doing a pinch gesture (which sends a wheel event with ctrlKey=true)
+    if (mode === 'Touchpad' && event.ctrlKey) {
       return zoom(event)
     }
 
