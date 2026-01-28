@@ -111,9 +111,9 @@ class MouseManager_ZoomPanOptions_Override {
     // ZPO:  ctrl and meta should work the same way
     if (event.ctrlKey || event.metaKey) event.preventDefault()
     // ZPO:  (re-)defining some variables
-    const isCtrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL) // We cannot trust event.ctrlKey because of touchpads
-    const isShift = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.SHIFT)
-    const isAlt = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.ALT)
+    const isCtrl = game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL) // We cannot trust event.ctrlKey because of touchpads
+    const isShift = game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.SHIFT)
+    const isAlt = game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.ALT)
 
     // ZPO:  commenting this out and rewriting it in a way that allows for horizontal-only scroll (via trackpad for example)
     //// Interpret shift+scroll as vertical scroll
