@@ -1,3 +1,6 @@
+## 2.2.0 - 2026-06-20
+- Fixed rotation bug: in regular Mouse mode, always let core code handle ctrl/shift scroll events (fixes #80)
+
 ## 2.1.0 - 2025-12-21
 - Fixed bug that ignored horizontal scrolling in Touchpad mode
 - Fixed bug that messed with rotation during Alternative mode (#69)
