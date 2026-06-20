@@ -150,31 +150,23 @@ class MouseManager_ZoomPanOptions_Override {
       mode = getSetting('pan-zoom-mode')
     }
 
-    // Case 1 - active Ruler
+    // Case 1 - active ruler
     const ruler = canvas.controls.ruler
     if (ruler.active && (isCtrl || isShift)) return ruler._onMouseWheel(event)
 
-    // Case 2 - Token is dragged
-    const draggedToken = canvas.tokens._draggedToken
-    if (draggedToken && (isCtrl || isShift)) return draggedToken._onDragMouseWheel(event)
+    // Case 2 - active layer
+    // ZPO: this is where the game rotates stuff.  it doesn't support Touchpad or Alternative.  so for those two, we will
+    // simply skip and never go through with it -- instead relying on our own rotation code (possibly outdated...)
+    if (mode === 'Mouse')
+      if (isCtrl || isShift) return canvas.activeLayer._onMouseWheel(event)
 
-    // Case 3 - rotate placeable objects
-    // ZPO:  rewritten better below
-    //const layer = canvas.activeLayer
-    //if (layer?.options?.rotatableObjects && (isCtrl || isShift)) {
-    //  const hasTarget = layer.options?.controllableObjects ? layer.controlled.length : !!layer.hover
-    //  if (hasTarget) {
-    //    const t = Date.now()
-    //    if ((t - this.#wheelTime) < this.constructor.MOUSE_WHEEL_RATE_LIMIT) return
-    //    this.#wheelTime = t
-    //    return layer._onMouseWheel(event)
-    //  }
-    //}
+    // Case 2.1 - active layer handling (e.g. placeable rotation) for non-standard pan/zoom mode
     const layer = canvas.activeLayer
     const layerPossiblyHasRotatableObjects = layer?.options?.rotatableObjects
     const currentlyHasRotationTarget = layer?.options?.controllableObjects ? layer?.controlled?.length : !!layer?.hover
     if (layerPossiblyHasRotatableObjects && currentlyHasRotationTarget) {
       if (mode === 'Mouse' && (isCtrl || isShift)) {
+        // this should never happen, since it's caught earlier in Case 2. kept here for completion
         return this.debounceRotationByRateLimit() && checkZoomLock() && layer._onMouseWheel(event)
       }
       if (mode === 'Touchpad' && isShift) {
@@ -193,7 +185,7 @@ class MouseManager_ZoomPanOptions_Override {
 
     // ZPO:  detailed override/rewrite for zooming and panning
 
-    // Case 4.2 - zoom the canvas
+    // Case 3.2 - zoom the canvas
     // (written to be readable)
     if (
       mode === 'Mouse'
@@ -202,12 +194,12 @@ class MouseManager_ZoomPanOptions_Override {
     ) {
       return zoom(event)
     }
-    // Case 4.2.2 - zoom the canvas if the user is doing a pinch gesture (which sends a wheel event with ctrlKey=true)
+    // Case 3.2.2 - zoom the canvas if the user is doing a pinch gesture (which sends a wheel event with ctrlKey=true)
     if (mode === 'Touchpad' && event.ctrlKey) {
       return zoom(event)
     }
 
-    // Cast 4.3 - pan the canvas horizontally (shift+scroll)
+    // Cast 3.3 - pan the canvas horizontally (shift+scroll)
     if (mode === 'Alternative' && isShift) {
       // noinspection JSSuspiciousNameCombination
       return panWithMultiplier({
@@ -215,7 +207,7 @@ class MouseManager_ZoomPanOptions_Override {
       })
     }
 
-    // Case 4.4 - pan the canvas in the direction of the mouse/touchpad event
+    // Case 3.4 - pan the canvas in the direction of the mouse/touchpad event
     panWithMultiplier(event)
   }
 }
