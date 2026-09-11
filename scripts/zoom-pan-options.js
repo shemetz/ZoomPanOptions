@@ -92,6 +92,7 @@ class MouseManager_ZoomPanOptions_Override {
     return true
   }
 
+  //noinspection JSUnusedGlobalSymbols
   /**
    * Begin listening to mouse events.
    * @internal
@@ -753,14 +754,6 @@ Hooks.on('init', function () {
 })
 
 Hooks.once('setup', function () {
-  libWrapper.register(
-    MODULE_ID,
-    'foundry.canvas.Canvas.prototype._onMouseWheel',
-    (event) => {
-      return canvas_onMouseWheel_override(event)
-    },
-    'OVERRIDE',
-  )
   libWrapper.register(
     MODULE_ID,
     'foundry.canvas.Canvas.prototype._onDragCanvasPan',
