@@ -156,8 +156,7 @@ class MouseManager_ZoomPanOptions_Override {
     if (ruler.active && (isCtrl || isShift)) return ruler._onMouseWheel(event)
 
     // Case 2 - active layer
-    // ZPO: this is where the game rotates stuff.  it doesn't support Touchpad or Alternative.  so for those two, we will
-    // simply skip and never go through with it -- instead relying on our own rotation code (possibly outdated...)
+    // ZPO: this is where the game rotates stuff.
     if (mode === 'Mouse')
       if (isCtrl || isShift) return canvas.activeLayer._onMouseWheel(event)
 
